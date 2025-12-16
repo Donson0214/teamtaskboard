@@ -1,0 +1,321 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+/**
+ * =======================
+ * USER
+ * =======================
+ */
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  name      String?
+  password  String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+
+  auditLogs     AuditLog[]
+  notifications Notification[] @relation("UserNotifications")
+  deviceTokens  DeviceToken[]
+
+  boardsAssigned Task[]        @relation("TaskAssignee")
+  comments       TaskComment[]
+
+  workspacesOwned Workspace[]       @relation("WorkspaceOwner")
+  memberships     WorkspaceMember[]
+}
+
+/**
+ * =======================
+ * WORKSPACE
+ * =======================
+ */
+model Workspace {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  ownerId   String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner   User              @relation("WorkspaceOwner", fields: [ownerId], references: [id])
+  members WorkspaceMember[]
+
+  // ✅ MULTI-BOARD
+  boards Board[]
+
+  // ✅ REQUIRED opposite relations
+  columns Column[]
+  tasks   Task[]
+  labels  Label[]
+
+  auditLogs     AuditLog[]
+  notifications Notification[] @relation("WorkspaceNotifications")
+
+  @@index([ownerId])
+}
+
+/**
+ * =======================
+ * BOARD
+ * =======================
+ */
+model Board {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  workspaceId String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  color       String?
+  icon        String?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+
+  columns Column[]
+  tasks   Task[] // optional but OK IF Task has boardId
+
+  @@index([workspaceId])
+}
+
+/**
+ * =======================
+ * WORKSPACE MEMBER
+ * =======================
+ */
+model WorkspaceMember {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  workspaceId String        @db.ObjectId
+  userId      String        @db.ObjectId
+  role        WorkspaceRole @default(MEMBER)
+  createdAt   DateTime      @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@unique([workspaceId, userId])
+  @@index([workspaceId])
+  @@index([userId])
+}
+
+/**
+ * =======================
+ * COLUMN
+ * =======================
+ */
+model Column {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  order Int
+  color String? @default("#6366f1")
+
+  workspaceId String @db.ObjectId
+  boardId     String @db.ObjectId
+
+  createdAt DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  board     Board     @relation(fields: [boardId], references: [id])
+  tasks     Task[]
+
+  @@index([workspaceId])
+  @@index([boardId])
+}
+
+/**
+ * =======================
+ * TASK
+ * =======================
+ */
+model Task {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  status      String?
+  dueDate     DateTime?
+  priority    TaskPriority?
+
+  workspaceId String  @db.ObjectId
+  boardId     String  @db.ObjectId
+  columnId    String  @db.ObjectId
+  assigneeId  String? @db.ObjectId
+
+  createdAt DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  board     Board     @relation(fields: [boardId], references: [id])
+  column    Column    @relation(fields: [columnId], references: [id])
+  assignee  User?     @relation("TaskAssignee", fields: [assigneeId], references: [id])
+
+  comments      TaskComment[]
+  attachments   Attachment[]
+  auditLogs     AuditLog[]     @relation("TaskAuditLogs")
+  notifications Notification[] @relation("TaskToNotification")
+  taskLabels    TaskLabel[]
+
+  @@index([workspaceId])
+  @@index([boardId])
+  @@index([columnId])
+  @@index([assigneeId])
+}
+
+/**
+ * =======================
+ * COMMENTS
+ * =======================
+ */
+model TaskComment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  taskId    String   @db.ObjectId
+  userId    String   @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([taskId])
+  @@index([userId])
+}
+
+/**
+ * =======================
+ * ATTACHMENTS
+ * =======================
+ */
+model Attachment {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  taskId      String   @db.ObjectId
+  fileUrl     String
+  fileName    String
+  fileType    String?
+  fileSize    Int?
+  storagePath String
+  createdAt   DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id])
+
+  @@index([taskId])
+}
+
+/**
+ * =======================
+ * LABELS
+ * =======================
+ */
+model Label {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  color       String
+  workspaceId String   @db.ObjectId
+  createdAt   DateTime @default(now())
+
+  workspace  Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  taskLabels TaskLabel[]
+
+  @@unique([workspaceId, name])
+  @@index([workspaceId])
+}
+
+/**
+ * =======================
+ * TASK ↔ LABEL
+ * =======================
+ */
+model TaskLabel {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  taskId  String @db.ObjectId
+  labelId String @db.ObjectId
+
+  task  Task  @relation(fields: [taskId], references: [id])
+  label Label @relation(fields: [labelId], references: [id])
+
+  @@unique([taskId, labelId])
+  @@index([taskId])
+  @@index([labelId])
+}
+
+/**
+ * =======================
+ * NOTIFICATIONS
+ * =======================
+ */
+model Notification {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  taskId      String?  @db.ObjectId
+  workspaceId String?  @db.ObjectId
+  message     String
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  task      Task?      @relation("TaskToNotification", fields: [taskId], references: [id])
+  user      User       @relation("UserNotifications", fields: [userId], references: [id])
+  workspace Workspace? @relation("WorkspaceNotifications", fields: [workspaceId], references: [id])
+
+  @@index([userId])
+  @@index([workspaceId])
+  @@index([taskId])
+}
+
+/**
+ * =======================
+ * DEVICE TOKENS
+ * =======================
+ */
+model DeviceToken {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  token     String   @unique
+  platform  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+/**
+ * =======================
+ * AUDIT LOGS
+ * =======================
+ */
+model AuditLog {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  workspaceId String   @db.ObjectId
+  taskId      String?  @db.ObjectId
+  action      String
+  details     String?
+  createdAt   DateTime @default(now())
+  userId      String   @db.ObjectId
+
+  task      Task?     @relation("TaskAuditLogs", fields: [taskId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@index([workspaceId])
+  @@index([taskId])
+  @@index([userId])
+}
+
+/**
+ * =======================
+ * ENUMS
+ * =======================
+ */
+enum WorkspaceRole {
+  OWNER
+  MEMBER
+  GUEST
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
