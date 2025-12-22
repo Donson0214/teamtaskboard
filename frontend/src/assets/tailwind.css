@@ -1,0 +1,22 @@
+@import url('https://rsms.me/inter/inter.css');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+  --caret-light: #4f46e5;
+  --caret-dark: #c7d2fe;
+}
+
+input,
+textarea,
+select {
+  caret-color: var(--caret-light);
+}
+html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+html.dark input,
+html.dark textarea,
+html.dark select {
+  caret-color: var(--caret-dark);
+}
