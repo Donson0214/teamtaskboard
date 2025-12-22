@@ -1,5 +1,8 @@
 # teamtaskboard
 
+For full setup (backend + frontend), see the root README:
+`README.md`.
+
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
