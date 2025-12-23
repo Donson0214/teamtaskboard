@@ -177,8 +177,17 @@ const triggerSpin = () => {
 const toggle = () => {
   triggerSpin();
   open.value = !open.value;
-  if (open.value && !store.items.length && !store.loading) {
-    store.fetchNotifications();
+  if (open.value) {
+    if (
+      isAuthenticated.value &&
+      store.tokenStatus !== "registered" &&
+      store.tokenStatus !== "pending"
+    ) {
+      store.registerDeviceToken({ userInitiated: true });
+    }
+    if (!store.items.length && !store.loading) {
+      store.fetchNotifications();
+    }
   }
 };
 

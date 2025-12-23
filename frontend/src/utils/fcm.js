@@ -1,13 +1,19 @@
 import { firebaseApp } from "@/firebase.js";
 import { getMessaging, getToken, onMessage, isSupported } from "firebase/messaging";
 
-export async function requestFcmToken() {
+export async function requestFcmToken(options = {}) {
+  const { requestPermission = false } = options;
   const supported = await isSupported().catch(() => false);
   if (!supported) return null;
   if (typeof Notification === "undefined") return null;
 
-  const permission = await Notification.requestPermission();
-  if (permission !== "granted") return null;
+  const currentPermission = Notification.permission;
+  if (currentPermission === "denied") return null;
+  if (currentPermission !== "granted") {
+    if (!requestPermission) return null;
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") return null;
+  }
 
   const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
   if (!vapidKey) {

@@ -241,7 +241,8 @@ export const useNotificationStore = defineStore("notifications", {
       }
     },
 
-    async registerDeviceToken() {
+    async registerDeviceToken(options = {}) {
+      const { userInitiated = false } = options;
       const auth = useAuthStore();
       if (!auth.isAuthenticated) {
         this.tokenStatus = "skipped";
@@ -264,7 +265,7 @@ export const useNotificationStore = defineStore("notifications", {
 
       let token = null;
       try {
-        token = await requestFcmToken();
+        token = await requestFcmToken({ requestPermission: userInitiated });
       } catch (err) {
         if (!shouldSuppressApiError(err)) {
           console.warn("Request FCM token failed:", err?.message || err);
