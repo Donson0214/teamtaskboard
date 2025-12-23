@@ -159,6 +159,7 @@
 
                 <div class="flex flex-col py-1">
 
+
                   <button @click="toggleTheme" class="menu-item flex items-center gap-2 px-4 py-2.5 text-sm font-medium" :class="menuItemClass">
                     <i class="fas fa-adjust text-slate-500"></i> Toggle Theme
                   </button>

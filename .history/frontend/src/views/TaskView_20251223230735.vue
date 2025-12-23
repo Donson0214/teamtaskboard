@@ -195,6 +195,7 @@
                   </p>
                 </div>
 
+
                 <button @click="toggleTheme" class="menu-item" :class="menuItemClass">
                   <i class="fas fa-adjust text-xs"></i> Toggle Theme
                 </button>
