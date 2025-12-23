@@ -218,6 +218,8 @@ const alert = ref({ type: "", message: "" });
 
 const DEMO_WORKSPACE = import.meta.env.VITE_DEMO_WORKSPACE || "Demo Workspace";
 const DEMO_BOARD = import.meta.env.VITE_DEMO_BOARD || "Demo Board";
+const DEMO_EMAIL = import.meta.env.VITE_DEMO_EMAIL || "demo@taskflow.dev";
+const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD || "Demo123!";
 const DEMO_BOARD_ICON = "fas fa-layer-group";
 const DEMO_BOARD_COLOR = "linear-gradient(135deg,#6366f1,#14b8a6)";
 
@@ -274,6 +276,16 @@ const passwordMismatch = computed(
     password.value !== confirmPassword.value
 );
 
+const DEMO_EMAIL_NORMALIZED = DEMO_EMAIL.toLowerCase();
+
+const isDemoCredentials = (candidateEmail, candidatePassword) => {
+  if (!candidateEmail || !candidatePassword) return false;
+  return (
+    String(candidateEmail).trim().toLowerCase() === DEMO_EMAIL_NORMALIZED &&
+    candidatePassword === DEMO_PASSWORD
+  );
+};
+
 watch(
   () => props.startTab,
   (value) => {
@@ -316,14 +328,27 @@ const switchForm = (form, { preserveAlert = false } = {}) => {
 
 const handleLogin = async () => {
   resetFeedback();
-  if (!email.value || !password.value) {
+  const trimmedEmail = email.value.trim();
+  const enteredPassword = password.value;
+
+  if (!trimmedEmail || !enteredPassword) {
     setAlert("error", "Email and password are required.");
+    return;
+  }
+
+  if (isDemoCredentials(trimmedEmail, enteredPassword)) {
+    isSubmitting.value = true;
+    try {
+      await runDemoLogin();
+    } finally {
+      isSubmitting.value = false;
+    }
     return;
   }
 
   isSubmitting.value = true;
   try {
-    const result = await auth.login(email.value.trim(), password.value);
+    const result = await auth.login(trimmedEmail, enteredPassword);
     if (result?.ok) {
       router.push(getRedirectPath());
     } else {
@@ -449,24 +474,29 @@ const ensureDemoTasks = async (workspaceId, boardId) => {
   }
 };
 
+const runDemoLogin = async () => {
+  const result = await auth.demoLogin();
+  if (result?.ok) {
+    const workspace = await ensureDemoWorkspace();
+    if (workspace?.id) {
+      const board = await ensureDemoBoard(workspace.id);
+      await ensureDemoTasks(workspace.id, board?.id);
+      workspaceStore.setCurrentWorkspace(workspace.id);
+      router.push(`/workspace/${workspace.id}`);
+      return result;
+    }
+    router.push(getRedirectPath());
+    return result;
+  }
+  setAlert("error", result?.message || "Demo sign-in failed. Please try again.");
+  return result;
+};
+
 const handleDemoLogin = async () => {
   resetFeedback();
   isDemoLoading.value = true;
   try {
-    const result = await auth.demoLogin();
-    if (result?.ok) {
-      const workspace = await ensureDemoWorkspace();
-      if (workspace?.id) {
-        const board = await ensureDemoBoard(workspace.id);
-        await ensureDemoTasks(workspace.id, board?.id);
-        workspaceStore.setCurrentWorkspace(workspace.id);
-        router.push(`/workspace/${workspace.id}`);
-        return;
-      }
-      router.push(getRedirectPath());
-    } else {
-      setAlert("error", result?.message || "Demo sign-in failed. Please try again.");
-    }
+    await runDemoLogin();
   } finally {
     isDemoLoading.value = false;
   }
