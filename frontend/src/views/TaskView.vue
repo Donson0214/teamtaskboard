@@ -27,7 +27,7 @@
     class="border-b sticky top-0 z-50 shadow-sm backdrop-blur-xl"
     :class="isDark ? 'bg-slate-900/80 border-slate-800/80' : 'bg-white/80 border-slate-200/80'"
   >
-    <div class="px-4 sm:px-6 py-6 flex items-center justify-between">
+    <div class="px-4 sm:px-6 py-4 sm:py-6 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-4">
         <button
           @click="toggleSidebar"
@@ -37,7 +37,7 @@
           <i class="fas fa-bars" :class="isDark ? 'text-white' : 'text-slate-700'"></i>
         </button>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center flex-wrap gap-2 sm:gap-3 w-full sm:w-auto justify-end">
           <div class="logo-flat">
   <svg
     viewBox="0 0 24 24"
@@ -226,8 +226,8 @@
     <transition name="slide">
         <aside
           v-show="sidebarOpen"
-          class="w-[280px] border-r h-full min-h-0 p-4 transition overflow-y-auto"
-          :class="isDark ? 'bg-slate-950/80 border-slate-800/80' : 'bg-white border-slate-200'"
+          class="w-[260px] sm:w-[280px] border-r h-full min-h-0 p-4 pt-24 sm:pt-4 transition overflow-y-auto fixed inset-y-0 left-0 z-40 sm:static sm:z-auto"
+          :class="isDark ? 'bg-slate-950/90 border-slate-800/80' : 'bg-white border-slate-200'"
         >
           <div class="flex flex-col h-full gap-5">
             <nav class="space-y-1">
@@ -399,7 +399,7 @@
       
         <div v-for="column in orderedColumns" :key="column.id" class="w-full max-w-xs flex flex-col gap-2 transition hover:-translate-y-1 sm:w-80">
 
-          <div :class="columnHeaderClass" class="rounded-t-xl border border-b-0 px-4 py-3 flex items-center justify-between shadow-sm backdrop-blur-md">
+          <div :class="columnHeaderClass" class="rounded-t-xl border border-b-0 px-3 py-2 sm:px-4 sm:py-3 flex items-center justify-between shadow-sm backdrop-blur-md">
             <div class="flex items-center gap-2">
               <div :style="{ background: column.color }" class="w-2 h-2 rounded-full"></div>
               <h3 class="font-semibold text-sm">{{ column.title }}</h3>
@@ -414,7 +414,7 @@
           
           <div
             :class="[columnBodyClass, dragOverColumnId === column.id ? 'drop-target' : '']"
-            class="flex-1 rounded-b-xl border p-3 space-y-3 min-h-[500px] shadow-sm transition-colors"
+            class="flex-1 rounded-b-xl border p-3 space-y-3 min-h-[360px] sm:min-h-[500px] shadow-sm transition-colors"
             @dragenter.prevent="handleDragEnter(column.id)"
             @dragover.prevent="handleDragOver($event, column.id)"
             @dragleave="handleDragLeave(column.id)"
@@ -430,7 +430,7 @@
               @dragend="handleDragEnd"
               @click="openTaskModal(task, column)"
               :class="taskCardClass"
-              class="task-card p-4 rounded-xl border cursor-pointer relative overflow-visible"
+              class="task-card p-3 sm:p-4 rounded-xl border cursor-pointer relative overflow-visible"
             >
 
               <div class="flex items-start justify-between mb-3 gap-2">

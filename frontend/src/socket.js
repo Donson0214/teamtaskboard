@@ -1,26 +1,20 @@
 
 import { io } from "socket.io-client";
 
-const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
-const fallbackSocketUrl = (() => {
-  try {
-    const parsed = new URL(apiUrl);
-    const protocol = parsed.protocol === "https:" ? "wss" : "ws";
-    const host = parsed.hostname;
-    const port = parsed.port ? `:${parsed.port}` : "";
-    return `${protocol}://${host}${port}`;
-  } catch {
-    return apiUrl.startsWith("https") ? apiUrl.replace(/^https?:/, "wss:") : apiUrl.replace(/^https?:/, "ws:");
-  }
-})();
+const normalizeBaseUrl = (value) =>
+  (value || "").replace(/\/api\/?$/, "").replace(/\/$/, "");
 
-const socketUrl = import.meta.env.VITE_SOCKET_URL || fallbackSocketUrl;
+const defaultApiUrl = "http://localhost:5000";
+const apiUrl = normalizeBaseUrl(
+  import.meta.env.VITE_API_URL || defaultApiUrl
+);
+const socketUrl = normalizeBaseUrl(import.meta.env.VITE_SOCKET_URL || apiUrl);
 
 export const socket = io(socketUrl, {
-  transports: ["websocket"],
+  transports: ["websocket", "polling"],
   autoConnect: false,
   reconnection: false,
-  timeout: 5000,
+  timeout: 20000,
 });
 
 let authToken = null;
