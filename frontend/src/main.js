@@ -5,12 +5,14 @@ import App from "./App.vue";
 import router from "./router/index.js";
 import { useThemeStore } from "./stores/themeStore.js";
 import { useAuthStore } from "./stores/authStore.js";
+import AppIcon from "./components/common/AppIcon.vue";
 
 import "./assets/tailwind.css";
 
 const app = createApp(App);
 const pinia = createPinia();
 app.use(pinia);
+app.component("AppIcon", AppIcon);
 
 const themeStore = useThemeStore(pinia);
 themeStore.initTheme();

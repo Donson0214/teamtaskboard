@@ -5,11 +5,11 @@
       class="p-2 rounded-lg relative"
       :class="isDark ? 'bg-slate-800 hover:bg-slate-700 text-slate-200' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'"
     >
-      <i
-        class="fas fa-bell"
+      <AppIcon
+        icon="fa-bell"
         :class="{ 'spin-once': bellSpinning }"
         @animationend="bellSpinning = false"
-      ></i>
+      />
       <span
         v-if="unreadCount"
         class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-[10px] flex items-center justify-center"

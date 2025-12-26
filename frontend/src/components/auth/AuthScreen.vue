@@ -57,20 +57,17 @@
               :class="alert.type"
               role="status"
             >
-              <i
-                :class="
-                  alert.type === 'error'
-                    ? 'fa-solid fa-circle-exclamation'
-                    : 'fa-regular fa-circle-check'
-                "
-              ></i>
+              <AppIcon
+                :icon="alert.type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check'"
+                class="text-sm"
+              />
               <span>{{ alert.message }}</span>
             </div>
 
             <div class="form-slider" :class="{ register: activeForm === 'register' }">
               <form class="form" @submit.prevent="handleLogin" novalidate>
                 <div class="mdm-input">
-                  <i class="fa-regular fa-user"></i>
+                  <AppIcon icon="fa-user" />
                   <input
                     v-model="email"
                     type="email"
@@ -80,7 +77,7 @@
                 </div>
 
                 <div class="mdm-input password">
-                  <i class="fa-solid fa-lock"></i>
+                  <AppIcon icon="fa-lock" />
                   <input
                     v-model="password"
                     :type="showPassword ? 'text' : 'password'"
@@ -88,7 +85,7 @@
                     placeholder="Enter Password..."
                   />
                   <span class="eye" @click="showPassword = !showPassword">
-                    <i :class="showPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye'"></i>
+                    <AppIcon :icon="showPassword ? 'fa-eye-slash' : 'fa-eye'" />
                   </span>
                 </div>
 
@@ -104,7 +101,7 @@
 
               <form class="form" @submit.prevent="handleRegister" novalidate>
                 <div class="mdm-input">
-                  <i class="fa-regular fa-user"></i>
+                  <AppIcon icon="fa-user" />
                   <input
                     v-model="name"
                     autocomplete="name"
@@ -113,7 +110,7 @@
                 </div>
 
                 <div class="mdm-input">
-                  <i class="fa-regular fa-envelope"></i>
+                  <AppIcon icon="fa-envelope" />
                   <input
                     v-model="email"
                     type="email"
@@ -123,7 +120,7 @@
                 </div>
 
                 <div class="mdm-input password">
-                  <i class="fa-solid fa-lock"></i>
+                  <AppIcon icon="fa-lock" />
                   <input
                     v-model="password"
                     :type="showPassword ? 'text' : 'password'"
@@ -131,12 +128,12 @@
                     placeholder="Password..."
                   />
                   <span class="eye" @click="showPassword = !showPassword">
-                    <i :class="showPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye'"></i>
+                    <AppIcon :icon="showPassword ? 'fa-eye-slash' : 'fa-eye'" />
                   </span>
                 </div>
 
                 <div class="mdm-input password">
-                  <i class="fa-solid fa-lock"></i>
+                  <AppIcon icon="fa-lock" />
                   <input
                     v-model="confirmPassword"
                     :type="showConfirmPassword ? 'text' : 'password'"
@@ -144,7 +141,7 @@
                     placeholder="Confirm Password..."
                   />
                   <span class="eye" @click="showConfirmPassword = !showConfirmPassword">
-                    <i :class="showConfirmPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye'"></i>
+                    <AppIcon :icon="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'" />
                   </span>
                 </div>
 
@@ -726,7 +723,7 @@ const handleDemoLogin = async () => {
   margin-bottom: 22px;
 }
 
-.mdm-input i {
+.mdm-input svg {
   width: 20px;
   height: 20px;
   flex: 0 0 20px;

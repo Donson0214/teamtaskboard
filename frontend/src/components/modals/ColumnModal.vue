@@ -6,7 +6,7 @@
         :class="isDark ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'"
       >
         <button @click="$emit('cancel')" class="absolute top-3 right-3 text-slate-400 hover:text-red-400">
-          <i class="fas fa-times"></i>
+          <AppIcon icon="fa-times" class="text-lg" />
         </button>
 
         <h2 class="text-xl font-bold mb-4">Create Column</h2>

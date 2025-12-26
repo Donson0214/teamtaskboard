@@ -58,14 +58,16 @@
                 title="Toggle theme"
               >
                 <span class="relative grid place-items-center">
-                  <i
-                    class="fas fa-sun text-[12px] transition-transform duration-300 group-hover:rotate-12"
+                  <AppIcon
                     v-if="theme === 'dark'"
-                  ></i>
-                  <i
-                    class="fas fa-moon text-[12px] transition-transform duration-300 group-hover:-rotate-12"
+                    icon="fa-sun"
+                    class="text-[12px] transition-transform duration-300 group-hover:rotate-12"
+                  />
+                  <AppIcon
                     v-else
-                  ></i>
+                    icon="fa-moon"
+                    class="text-[12px] transition-transform duration-300 group-hover:-rotate-12"
+                  />
                 </span>
               </button>
 
@@ -111,7 +113,7 @@
 
               <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <div class="w-full sm:w-[420px] rounded-full border border-[var(--border)] bg-[var(--glass)] px-4 py-3 flex items-center gap-3">
-                  <i class="fas fa-envelope text-[var(--text-muted)] text-sm"></i>
+                  <AppIcon icon="fa-envelope" class="text-[var(--text-muted)] text-sm" />
                   <input
                     class="w-full bg-transparent outline-none text-sm placeholder:text-[var(--text-muted)]/60 text-[var(--text-strong)]"
                     placeholder="Email address"
@@ -165,12 +167,12 @@
                 />
                 <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent"></div>
                 <div class="absolute top-4 right-4 rounded-full border border-[var(--border)] bg-black/40 backdrop-blur px-3 py-1 text-[11px] text-white/80 flex items-center gap-2">
-                  <i class="fas fa-lock text-violet-300"></i>
+                  <AppIcon icon="fa-lock" class="text-violet-300" />
                   Locked
                 </div>
                 <div class="absolute inset-x-0 bottom-6 flex justify-center z-20 pointer-events-none">
                   <div class="rounded-full border border-[var(--border)] bg-black/40 backdrop-blur px-4 py-2 text-xs text-white/80">
-                    <i class="fas fa-lock mr-2 text-violet-300"></i>
+                    <AppIcon icon="fa-lock" class="mr-2 text-violet-300" />
                     Preview is locked - sign in to use the app
                   </div>
                 </div>
@@ -259,12 +261,12 @@
               <!-- PLAY HINT -->
               <div class="absolute inset-0 grid place-items-center opacity-0 group-hover:opacity-100 transition">
                 <div class="h-16 w-16 rounded-full border border-white/20 bg-black/50 backdrop-blur grid place-items-center animate-soft-pop">
-                  <i class="fas fa-play text-white ml-1"></i>
+                  <AppIcon icon="fa-play" class="text-white ml-1" />
                 </div>
               </div>
 
               <div class="pointer-events-none absolute left-5 bottom-5 rounded-full border border-white/10 bg-black/40 backdrop-blur px-4 py-2 text-xs text-white/85">
-                <i class="fas fa-lock mr-2 text-violet-300"></i>
+                <AppIcon icon="fa-lock" class="mr-2 text-violet-300" />
                 Demo only — sign in to interact
               </div>
             </div>
@@ -366,13 +368,13 @@
             <div class="mt-7 space-y-3 text-[var(--text-muted)] text-sm">
               <div class="flex items-center gap-3">
                 <span class="h-9 w-9 rounded-xl border border-[var(--border)] bg-[var(--glass)] grid place-items-center">
-                  <i class="fas fa-envelope text-[var(--text-strong)]/70"></i>
+                  <AppIcon icon="fa-envelope" class="text-[var(--text-strong)]/70" />
                 </span>
                 <span>support@taskflow.app</span>
               </div>
               <div class="flex items-center gap-3">
                 <span class="h-9 w-9 rounded-xl border border-[var(--border)] bg-[var(--glass)] grid place-items-center">
-                  <i class="fas fa-location-dot text-[var(--text-strong)]/70"></i>
+                  <AppIcon icon="fa-location-dot" class="text-[var(--text-strong)]/70" />
                 </span>
                 <span>Remote-friendly</span>
               </div>
@@ -434,7 +436,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, h, defineComponent } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, h, defineComponent, resolveComponent } from "vue";
 import { useRouter } from "vue-router";
 import previewImage from "@/assets/img/db.jpg";
 import demoVideoSrc from "@/assets/video/bgv.mp4";
@@ -569,6 +571,7 @@ const FeatureCard = defineComponent({
   name: "FeatureCard",
   props: { icon: String, title: String, text: String },
   setup(props) {
+    const Icon = resolveComponent("AppIcon");
     return () =>
       h(
         "div",
@@ -585,7 +588,7 @@ const FeatureCard = defineComponent({
                   "h-10 w-10 rounded-xl border border-[var(--border)] bg-[var(--glass)] grid place-items-center text-[var(--text-strong)]/75 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105",
               },
               [
-                h("i", { class: `fas ${props.icon || ""}` }),
+                h(Icon, { icon: props.icon || "", class: "text-base" }),
                 h("span", { class: "icon-sheen pointer-events-none" }),
               ]
             ),
@@ -627,6 +630,7 @@ const PricingCard = defineComponent({
   emits: ["action"],
   props: { plan: String, price: String, tag: String, features: Array, button: String, highlight: Boolean },
   setup(props, { emit }) {
+    const Icon = resolveComponent("AppIcon");
     return () => {
       const containerClass = props.highlight
         ? "border-violet-400/30 bg-gradient-to-b from-violet-500/15 to-[var(--card)] shadow-[0_22px_80px_rgba(168,85,247,0.18)]"
@@ -666,7 +670,7 @@ const PricingCard = defineComponent({
             { class: "mt-6 space-y-3 text-sm text-[var(--text-muted)]" },
             (props.features || []).map((f, i) =>
               h("li", { class: "flex items-start gap-2", key: i }, [
-                h("i", { class: "fas fa-check text-violet-300 mt-1" }),
+                h(Icon, { icon: "fa-check", class: "text-violet-300 mt-1" }),
                 h("span", f),
               ])
             )

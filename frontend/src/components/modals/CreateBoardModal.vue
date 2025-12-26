@@ -56,7 +56,7 @@
                   : 'border-slate-300 hover:border-slate-400'
             ]"
           >
-            <i :class="ic"></i>
+            <AppIcon :icon="ic" />
           </button>
         </div>
 

@@ -20,7 +20,7 @@
           class="p-2 rounded-lg"
           :class="isDark ? 'hover:bg-slate-800' : 'hover:bg-slate-100'"
         >
-          <i class="fas fa-times" :class="iconClass"></i>
+          <AppIcon icon="fa-times" :class="iconClass" />
         </button>
       </header>
 
@@ -78,7 +78,7 @@
                 @click="remove(label.name)"
                 class="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
               >
-                <i class="fas fa-trash text-xs text-red-500"></i>
+                <AppIcon icon="fa-trash" class="text-xs text-red-500" />
               </button>
             </div>
           </div>

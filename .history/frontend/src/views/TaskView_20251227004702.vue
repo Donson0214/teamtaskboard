@@ -25,15 +25,48 @@
 
   <header
     class="border-b sticky top-0 z-50 shadow-sm backdrop-blur-xl"
-    :class="[
-      isDark ? 'bg-slate-900/80 border-slate-800/80' : 'bg-white/80 border-slate-200/80',
-      sidebarOpen ? 'sm:ml-[280px]' : 'sm:ml-20'
-    ]"
+    :class="isDark ? 'bg-slate-900/80 border-slate-800/80' : 'bg-white/80 border-slate-200/80'"
   >
-    <div class="px-4 sm:px-6 py-4 sm:py-6 flex flex-wrap items-center justify-end gap-3">
+    <div class="px-4 sm:px-6 py-4 sm:py-6 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-4">
+        <button
+          @click="toggleSidebar"
+          class="p-2.5 rounded-xl border border-transparent transition"
+          :class="isDark ? 'bg-slate-900/80' : 'bg-white/70'"
+        >
+          <i class="fas fa-bars" :class="isDark ? 'text-white' : 'text-slate-700'"></i>
+        </button>
+
+        <div class="flex items-center flex-wrap gap-2 sm:gap-3 w-full sm:w-auto justify-end">
+          <div class="logo-flat">
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.75"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="w-7 h-7"
+    :class="isDark ? 'text-white' : 'text-slate-900'"
+  >
+    <path d="M12 2 3 7l9 5 9-5-9-5Z" />
+    <path d="M3 7v10l9 5 9-5V7" />
+    <path d="M12 12v10" />
+  </svg>
+</div>
+
+          <div>
+            <h1 class="text-xl font-bold leading-tight" :class="isDark ? 'text-white' : 'text-slate-900'">TaskFlow</h1>
+            <p class="text-xs font-medium tracking-wide" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
+              Team Task Management
+            </p>
+          </div>
+        </div>
+      </div>
+
         <div class="flex items-center gap-3">
           <div class="relative hidden sm:block">
-            <AppIcon icon="fa-search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
             <input
               v-model="searchQuery"
               type="text"
@@ -50,7 +83,7 @@
             class="p-2.5 rounded-xl border transition"
             :class="isDark ? 'bg-slate-900/80 border-slate-800 hover:border-purple-500/50' : 'bg-white/80 border-slate-200 hover:border-purple-300/60'"
           >
-            <AppIcon :icon="isDark ? 'fa-sun' : 'fa-moon'" :class="isDark ? 'text-amber-400' : 'text-slate-600'" />
+            <i class="fas" :class="isDark ? 'fa-sun text-amber-400' : 'fa-moon text-slate-600'"></i>
           </button>
 
           <NotificationBell />
@@ -61,7 +94,7 @@
               class="p-2.5 rounded-xl border transition"
               :class="isDark ? 'border-slate-800 bg-slate-900/80 hover:border-purple-500/50' : 'border-slate-200 bg-white/80 hover:border-purple-300/60'"
             >
-              <AppIcon icon="fa-clock" class="text-slate-500" />
+              <i class="fas fa-clock text-slate-500"></i>
             </button>
 
             <transition name="fade-scale">
@@ -96,7 +129,7 @@
                     :class="isDark ? 'hover:bg-slate-800/80' : 'hover:bg-slate-50'"
                   >
                     <div class="w-8 h-8 rounded-full grid place-items-center text-xs font-semibold text-white" :class="event.badgeBg">
-                      <AppIcon :icon="event.icon" />
+                      <i :class="['fas', event.icon]"></i>
                     </div>
                     <div class="flex-1">
                       <p class="text-sm" :class="isDark ? 'text-white' : 'text-slate-800'">
@@ -104,7 +137,7 @@
                         <span v-if="event.target" class="text-purple-600 dark:text-purple-300 font-semibold"> {{ event.target }}</span>
                       </p>
                       <div class="text-[12px] flex items-center gap-2" :class="isDark ? 'text-slate-400' : 'text-slate-600'">
-                        <span class="flex items-center gap-1"><AppIcon icon="fa-clock" class="text-[10px]" /> {{ event.when }}</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-clock text-[10px]"></i> {{ event.when }}</span>
                         <span class="w-1.5 h-1.5 rounded-full" :class="event.statusDot"></span>
                       </div>
                     </div>
@@ -141,11 +174,10 @@
                   {{ userEmail }}
                 </span>
               </div>
-              <AppIcon
-                icon="fa-chevron-down"
-                class="text-[10px]"
+              <i
+                class="fas fa-chevron-down text-[10px]"
                 :class="isDark ? 'text-slate-400' : 'text-slate-500'"
-              />
+              ></i>
             </button>
 
             <transition name="fade-scale">
@@ -164,14 +196,14 @@
                 </div>
 
                 <button @click="toggleTheme" class="menu-item" :class="menuItemClass">
-                  <AppIcon icon="fa-adjust" class="text-xs" /> Toggle Theme
+                  <i class="fas fa-adjust text-xs"></i> Toggle Theme
                 </button>
 
                 <button
                   @click="handleLogoutFromMenu"
                   class="menu-item text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                 >
-                  <AppIcon icon="fa-sign-out-alt" class="text-xs" />
+                  <i class="fas fa-sign-out-alt text-xs"></i>
                   Logout
                 </button>
               </div>
@@ -181,81 +213,31 @@
       </div>
   </header>
 
-  <div
-    class="flex min-h-0"
-    :class="sidebarOpen ? 'sm:ml-[280px]' : 'sm:ml-20'"
-  >
+  <div class="flex min-h-0">
 
     <transition name="slide">
         <aside
-          class="border-r h-full min-h-0 p-4 transition-all duration-200 overflow-y-auto fixed inset-y-0 left-0 z-40"
-          :class="[
-            isDark ? 'bg-slate-950/90 border-slate-800/80' : 'bg-white border-slate-200',
-            sidebarOpen ? 'w-[260px] sm:w-[280px]' : 'w-20'
-          ]"
+          v-show="sidebarOpen"
+          class="w-[260px] sm:w-[280px] border-r h-full min-h-0 p-4 pt-24 sm:pt-4 transition overflow-y-auto fixed inset-y-0 left-0 z-40 sm:static sm:z-auto"
+          :class="isDark ? 'bg-slate-950/90 border-slate-800/80' : 'bg-white border-slate-200'"
         >
           <div class="flex flex-col h-full gap-5">
-            <div class="flex items-center gap-3" :class="sidebarOpen ? 'justify-between' : 'justify-center'">
-              <button
-                type="button"
-                class="flex items-center gap-3 text-left"
-                :class="sidebarOpen ? 'flex-1' : 'justify-center'"
-                @click="!sidebarOpen && toggleSidebar()"
-                :aria-label="sidebarOpen ? 'Workspace branding' : 'Expand sidebar'"
-              >
-                <div class="logo-flat">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.75"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="w-7 h-7"
-                    :class="isDark ? 'text-white' : 'text-slate-900'"
-                  >
-                    <path d="M12 2 3 7l9 5 9-5-9-5Z" />
-                    <path d="M3 7v10l9 5 9-5V7" />
-                    <path d="M12 12v10" />
-                  </svg>
-                </div>
-                <div v-if="sidebarOpen">
-                  <h1 class="text-base font-semibold leading-tight" :class="isDark ? 'text-white' : 'text-slate-900'">
-                    TaskFlow
-                  </h1>
-                  
-                </div>
-              </button>
-              <button
-                v-if="sidebarOpen"
-                @click="toggleSidebar"
-                class="p-2.5 rounded-xl border transition"
-                :class="isDark ? 'border-slate-800 bg-slate-900/80 hover:border-purple-500/50' : 'border-slate-200 bg-white/80 hover:border-purple-300/60'"
-                aria-label="Collapse sidebar"
-              >
-                <AppIcon icon="fa-chevron-right" :class="isDark ? 'text-white' : 'text-slate-700'" />
-              </button>
-            </div>
             <nav class="space-y-1">
               <button
                 v-for="item in sidebarNav"
                 :key="item.id"
                 @click="handleNavClick(item)"
                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition border"
-                :title="sidebarOpen ? '' : item.label"
-                :class="[
-                  activeNav === item.id
-                    ? (isDark ? 'border-slate-700 bg-slate-800/80 text-white' : 'border-slate-200 bg-slate-100 text-slate-900')
-                    : (isDark ? 'border-transparent text-slate-300 hover:bg-slate-900/60' : 'border-transparent text-slate-700 hover:bg-slate-50'),
-                  sidebarOpen ? 'justify-start' : 'justify-center px-2 gap-0'
-                ]"
+                :class="activeNav === item.id
+                  ? (isDark ? 'border-slate-700 bg-slate-800/80 text-white' : 'border-slate-200 bg-slate-100 text-slate-900')
+                  : (isDark ? 'border-transparent text-slate-300 hover:bg-slate-900/60' : 'border-transparent text-slate-700 hover:bg-slate-50')"
               >
-                <AppIcon :icon="item.icon" class="text-base" />
-                <span v-if="sidebarOpen">{{ item.label }}</span>
+                <i :class="[(item.style || 'far'), item.icon, 'text-base']"></i>
+                <span>{{ item.label }}</span>
               </button>
             </nav>
 
-            <div v-if="sidebarOpen" class="flex-1 border-t pt-4" :class="isDark ? 'border-slate-800' : 'border-slate-200'">
+            <div class="flex-1 border-t pt-4" :class="isDark ? 'border-slate-800' : 'border-slate-200'">
               <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.08em] mb-3" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
                 <span>Boards</span>
                 <span
@@ -268,7 +250,7 @@
               </div>
 
               <div class="relative mb-3">
-                <AppIcon icon="fa-search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                 <input
                   v-model="boardSearch"
                   type="text"
@@ -301,36 +283,24 @@
               </div>
             </div>
 
-            <div
-              class="flex gap-2 border-t pt-4"
-              :class="[
-                isDark ? 'border-slate-800' : 'border-slate-200',
-                sidebarOpen ? 'flex-row items-center justify-between' : 'flex-col items-stretch'
-              ]"
-            >
+            <div class="flex items-center justify-between gap-2 border-t pt-4" :class="isDark ? 'border-slate-800' : 'border-slate-200'">
               <button
                 @click="toggleTheme"
-                class="px-3 py-2 rounded-xl border text-sm font-semibold transition flex items-center justify-center gap-2"
-                :class="[
-                  isDark ? 'border-slate-800 text-slate-200 hover:border-slate-600' : 'border-slate-200 text-slate-700 hover:border-slate-300',
-                  sidebarOpen ? 'flex-1' : 'w-full px-0 py-2.5'
-                ]"
+                class="flex-1 px-3 py-2 rounded-xl border text-sm font-semibold transition flex items-center justify-center gap-2"
+                :class="isDark ? 'border-slate-800 text-slate-200 hover:border-slate-600' : 'border-slate-200 text-slate-700 hover:border-slate-300'"
                 title="Toggle theme"
               >
-                <AppIcon icon="fa-moon" class="text-sm" />
-                <span v-if="sidebarOpen">Theme</span>
+                <i class="far fa-moon text-sm"></i>
+                Theme
               </button>
               <button
                 @click="handleLogout"
-                class="px-3 py-2 rounded-xl border text-sm font-semibold transition flex items-center justify-center gap-2"
-                :class="[
-                  isDark ? 'border-slate-800 text-red-300 hover:border-red-500/60' : 'border-slate-200 text-red-500 hover:border-red-300/60',
-                  sidebarOpen ? 'flex-1' : 'w-full px-0 py-2.5'
-                ]"
+                class="flex-1 px-3 py-2 rounded-xl border text-sm font-semibold transition flex items-center justify-center gap-2"
+                :class="isDark ? 'border-slate-800 text-red-300 hover:border-red-500/60' : 'border-slate-200 text-red-500 hover:border-red-300/60'"
                 title="Logout"
               >
-                <AppIcon icon="fa-sign-out-alt" class="text-sm" />
-                <span v-if="sidebarOpen">Logout</span>
+                <i class="fas fa-sign-out-alt text-sm"></i>
+                Logout
               </button>
             </div>
         </div>
@@ -352,21 +322,21 @@
             class="flex items-center gap-1 px-3 py-1 rounded-full border"
             :class="isDark ? 'border-slate-700 bg-transparent text-white' : 'border-slate-200 bg-white text-slate-600'"
           >
-            <AppIcon icon="fa-layer-group" class="text-[11px]" />
+            <i class="fas fa-layer-group text-[11px]"></i>
             {{ columnCount }} columns
           </span>
           <span
             class="flex items-center gap-1 px-3 py-1 rounded-full border"
             :class="isDark ? 'border-slate-700 bg-transparent text-white' : 'border-slate-200 bg-white text-slate-600'"
           >
-            <AppIcon icon="fa-clipboard-check" class="text-[11px]" />
+            <i class="fas fa-clipboard-check text-[11px]"></i>
             {{ totalTasks }} tasks
           </span>
           <span
             class="flex items-center gap-1 px-3 py-1 rounded-full border"
             :class="isDark ? 'border-slate-700 bg-transparent text-white' : 'border-slate-200 bg-white text-slate-600'"
           >
-            <AppIcon icon="fa-tags" class="text-[11px]" />
+            <i class="fas fa-tags text-[11px]"></i>
             {{ labelCount }} labels
           </span>
         </div>
@@ -429,7 +399,7 @@
             </div>
 
             <button v-if="canManageColumns" @click="confirmDeleteColumn(column)" class="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20">
-              <AppIcon icon="fa-trash" class="text-xs text-red-500" />
+              <i class="fas fa-trash text-xs text-red-500"></i>
             </button>
           </div>
 
@@ -465,7 +435,7 @@
                     @click.stop="toggleTaskMenu(task.id)"
                     class="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800"
                   >
-                    <AppIcon icon="fa-ellipsis-vertical" class="text-xs" />
+                    <i class="fas fa-ellipsis-vertical text-xs"></i>
                   </button>
                   <div
                   v-if="openTaskMenuId === task.id"
@@ -477,14 +447,14 @@
                     :class="actionMenuItemClass"
                     @click.stop="forceViewTask(task, column)"
                   >
-                    <AppIcon icon="fa-eye" class="mr-2 text-[11px]" />View task
+                    <i class="fas fa-eye mr-2 text-[11px]"></i>View task
                   </button>
                   <button
                     class="w-full text-left px-3 py-2 text-xs"
                     :class="actionMenuItemClass"
                       @click.stop="openTaskModal(task, column); closeTaskMenu()"
                     >
-                      <AppIcon icon="fa-pen" class="mr-2 text-[11px]" />Edit task
+                      <i class="fas fa-pen mr-2 text-[11px]"></i>Edit task
                     </button>
                     <button
                       v-if="canDeleteTasks"
@@ -492,7 +462,7 @@
                       :class="isDark ? 'hover:bg-red-900/30' : 'hover:bg-red-50'"
                       @click.stop="confirmDeleteTask(task, column); closeTaskMenu()"
                     >
-                      <AppIcon icon="fa-trash" class="mr-2 text-[11px]" />Delete task
+                      <i class="fas fa-trash mr-2 text-[11px]"></i>Delete task
                     </button>
                   </div>
                 </div>
@@ -516,16 +486,16 @@
 
             <div class="flex items-center justify-between text-[11px] gap-2 flex-wrap">
               <span :class="priorityClass(task.priority)" class="inline-flex items-center gap-1">
-                <AppIcon icon="fa-bolt" class="text-[10px]" />
+                <i class="fas fa-bolt text-[10px]"></i>
                 {{ task.priority }}
               </span>
               <span v-if="task.assignee" class="inline-flex items-center gap-1 px-2 py-1 rounded-full"
                 :class="isDark ? 'bg-slate-800 text-slate-200 border border-slate-700' : 'bg-slate-100 text-slate-700 border border-slate-200'">
-                <AppIcon icon="fa-user" class="text-[10px]" />{{ task.assignee }}
+                <i class="fas fa-user text-[10px]"></i>{{ task.assignee }}
               </span>
               <span v-if="task.dueDate" class="inline-flex items-center gap-1 px-2 py-1 rounded-full"
                 :class="isDark ? 'bg-slate-800 text-slate-200 border border-slate-700' : 'bg-slate-100 text-slate-700 border border-slate-200'">
-                <AppIcon icon="fa-calendar" class="text-[10px]" />{{ task.dueDate }}
+                <i class="fas fa-calendar text-[10px]"></i>{{ task.dueDate }}
               </span>
             </div>
 
@@ -534,7 +504,7 @@
               v-if="(task.comments?.length || 0) > 0 || commentPreview(task)"
             >
               <div :class="isDark ? 'text-slate-400' : 'text-slate-500'" class="flex items-center gap-1">
-                <AppIcon icon="fa-comments" class="text-[10px]" />
+                <i class="fas fa-comments text-[10px]"></i>
                 <span>{{ task.comments?.length || 0 }}</span>
               </div>
               <p
@@ -620,7 +590,7 @@
                 :class="isDark ? 'border-slate-700 text-slate-200 hover:border-indigo-400 hover:text-indigo-100 hover:bg-slate-800' : 'border-slate-300 text-slate-700 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50'"
                 @click.stop="toggleQuickComment(task.id)"
               >
-                <AppIcon icon="fa-comment-dots" class="mr-1 text-[10px]" />
+                <i class="fas fa-comment-dots mr-1 text-[10px]"></i>
               </button>
               <button
                 v-if="canEditTasks" 
@@ -628,14 +598,14 @@
                 :class="isDark ? 'border-purple-700 text-purple-100 bg-purple-900/30 hover:bg-purple-800/40' : 'border-purple-200 text-purple-700 bg-purple-50 hover:bg-purple-100'"
                 @click.stop="openTaskModal(task, column)"
               >
-                <AppIcon icon="fa-pen" class="mr-1 text-[10px]" />
+                <i class="fas fa-pen mr-1 text-[10px]"></i> 
               </button>
               <button
                 class="px-3 py-1 text-[11px] rounded-full border"
                 :class="isDark ? 'border-blue-700 text-blue-100 bg-blue-900/30 hover:bg-blue-800/40' : 'border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100'"
                 @click.stop="forceViewTask(task, column)"
               >
-                <AppIcon icon="fa-eye" class="mr-1 text-[10px]" />
+                <i class="fas fa-eye mr-1 text-[10px]"></i>
               </button>
             </div>
 
@@ -647,7 +617,7 @@
                 @click="openNewTaskModal(column.id)"
                 class="w-full py-3 border-2 border-dashed rounded-xl flex items-center justify-center gap-2 text-sm"
             >
-              <AppIcon icon="fa-plus" /> Add Task
+              <i class="fas fa-plus"></i> Add Task
             </button>
 
           </div>
@@ -661,7 +631,7 @@
           class="w-80 h-32 rounded-xl border-2 border-dashed flex items-center justify-center gap-2 text-sm transition hover:-translate-y-1 hover:shadow-xl"
           :class="isDark ? 'bg-slate-900/60 border-slate-800 hover:border-purple-500/60' : 'bg-white/90 border-slate-200 hover:border-purple-300/70'"
         >
-          <AppIcon icon="fa-plus" /> Add Column
+          <i class="fas fa-plus"></i> Add Column
         </button>
 
       </div>
@@ -727,7 +697,6 @@ import { useAuthStore } from "@/stores/authStore";
 import { useActivityStore } from "@/stores/activityStore";
 
 import { useNotificationStore } from "@/stores/notificationStore";
-import { useSidebarState } from "@/composables/useSidebarState";
 
 import NotificationBell from "@/components/common/NotificationBell.vue";
 import AttachmentPreviewModal from "@/components/modals/AttachmentPreviewModal.vue";
@@ -876,7 +845,7 @@ const debouncedBoardSearch = ref("");
 const showTaskCreate = ref(false);
 const showCreateColumnModal = ref(false);
 const selectedColumnId = ref(null);
-const { sidebarOpen } = useSidebarState();
+const sidebarOpen = ref(true);
 const activeNav = ref("tasks");
 const activeFilter = ref("all");
 

@@ -21,7 +21,7 @@
           class="p-2 rounded-lg"
           :class="isDark ? 'hover:bg-slate-800' : 'hover:bg-slate-100'"
         >
-          <i class="fas fa-times" :class="isDark ? 'text-slate-300' : 'text-slate-600'"></i>
+          <AppIcon icon="fa-times" :class="isDark ? 'text-slate-300' : 'text-slate-600'" />
         </button>
       </div>
 
@@ -90,7 +90,7 @@
               @click="requestRemove(member.email)"
               class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
             >
-              <i class="fas fa-trash text-red-500 text-sm"></i>
+              <AppIcon icon="fa-trash" class="text-red-500 text-sm" />
             </button>
           </div>
         </div>
@@ -139,7 +139,7 @@
             :disabled="removeLoading"
             @click="confirmRemove"
           >
-            <i v-if="removeLoading" class="fas fa-spinner fa-spin text-[11px]"></i>
+            <AppIcon v-if="removeLoading" icon="fa-spinner" class="text-[11px] animate-spin" />
             {{ removeLoading ? "Removing..." : "Remove" }}
           </button>
         </div>

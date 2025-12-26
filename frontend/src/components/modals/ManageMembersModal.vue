@@ -77,7 +77,7 @@
             :disabled="removeLoading"
             @click="confirmRemove"
           >
-            <i v-if="removeLoading" class="fas fa-spinner fa-spin text-[11px]"></i>
+            <AppIcon v-if="removeLoading" icon="fa-spinner" class="text-[11px] animate-spin" />
             {{ removeLoading ? "Removing..." : "Remove" }}
           </button>
         </div>

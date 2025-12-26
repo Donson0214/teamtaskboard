@@ -9,13 +9,13 @@
           @click="$emit('cancel')"
           class="absolute top-4 right-4 text-slate-400 hover:text-red-400 transition"
         >
-          <i class="fas fa-times text-lg"></i>
+          <AppIcon icon="fa-times" class="text-lg" />
         </button>
 
         <div class="flex items-center gap-3 mb-6">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white"
                :class="isDark ? 'bg-indigo-600' : 'bg-indigo-500'">
-            <i class="fas" :class="isEdit ? 'fa-pen' : 'fa-plus'"></i>
+            <AppIcon :icon="isEdit ? 'fa-pen' : 'fa-plus'" class="text-lg" />
           </div>
           <div>
             <p class="text-xs uppercase tracking-wide" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
@@ -30,7 +30,7 @@
           <div class="space-y-5">
             <div>
               <label class="text-sm font-semibold flex items-center gap-2">
-                <i class="fas fa-heading text-xs"></i>
+                <AppIcon icon="fa-heading" class="text-xs" />
                 Title
               </label>
               <input
@@ -44,7 +44,7 @@
 
             <div>
               <label class="text-sm font-semibold flex items-center gap-2">
-                <i class="fas fa-align-left text-xs"></i>
+                <AppIcon icon="fa-align-left" class="text-xs" />
                 Description
               </label>
               <textarea
@@ -63,7 +63,7 @@
 
             <div>
               <label class="text-sm font-semibold flex items-center gap-2">
-                <i class="fas fa-comment-dots text-xs"></i>
+                <AppIcon icon="fa-comment-dots" class="text-xs" />
                 Task Comment (optional)
               </label>
               <textarea
@@ -86,7 +86,7 @@
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="text-sm font-semibold flex items-center gap-2">
-                  <i class="fas fa-signal text-xs"></i>
+                  <AppIcon icon="fa-signal" class="text-xs" />
                   Label
                 </label>
                 <div class="flex flex-wrap gap-2 mt-2">
@@ -115,7 +115,7 @@
 
               <div>
                 <label class="text-sm font-semibold flex items-center gap-2">
-                  <i class="fas fa-calendar-alt text-xs text-red-400"></i>
+                  <AppIcon icon="fa-calendar-alt" class="text-xs text-red-400" />
                   Due Date <span class="text-red-500">*</span>
                 </label>
                 <input
@@ -129,7 +129,7 @@
 
             <div>
               <label class="text-sm font-semibold flex items-center gap-2">
-                <i class="fas fa-user text-xs"></i>
+                <AppIcon icon="fa-user" class="text-xs" />
                 Assign To
               </label>
               <select
@@ -146,7 +146,7 @@
 
             <div>
               <label class="text-sm font-semibold flex items-center gap-2">
-                <i class="fas fa-paperclip text-xs"></i>
+                <AppIcon icon="fa-paperclip" class="text-xs" />
                 Attachments
               </label>
               <div class="mt-2">
@@ -154,7 +154,7 @@
                   class="inline-flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer text-sm font-medium"
                   :class="isDark ? 'bg-slate-800 border border-slate-700 hover:border-indigo-400' : 'bg-white border border-slate-300 hover:border-indigo-500 shadow-sm'"
                 >
-                  <i class="fas fa-upload"></i>
+                  <AppIcon icon="fa-upload" />
                   <span>Choose files</span>
                   <input
                     type="file"
@@ -184,7 +184,7 @@
                     @click="removeAttachment(f)"
                     class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center"
                   >
-                    x
+                    <AppIcon icon="fa-times" />
                   </button>
                 </div>
               </div>

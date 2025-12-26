@@ -17,7 +17,7 @@
           @click="$emit('close')"
           class="absolute top-4 right-4 text-slate-400 hover:text-red-400 transition"
         >
-          <i class="fas fa-times text-lg"></i>
+          <AppIcon icon="fa-times" class="text-lg" />
         </button>
 
         <div class="max-h-[70vh] overflow-y-auto p-6 md:p-8 space-y-6">
@@ -51,7 +51,7 @@
                 class="px-3 py-1.5 rounded-full text-[11px] font-semibold border shadow-sm inline-flex items-center gap-2"
                 :class="viewModeBadge"
               >
-                <i :class="readonly ? 'fas fa-lock' : 'fas fa-pen'"></i>
+                <AppIcon :icon="readonly ? 'fa-lock' : 'fa-pen'" class="text-[11px]" />
                 {{ readonly ? "View only" : "Editing enabled" }}
               </span>
               <button
@@ -60,7 +60,7 @@
                 :disabled="!canUpdateTask"
                 @click="handleUpdateTask"
               >
-                <i class="fas fa-save text-[11px] mr-1"></i> Update task
+                <AppIcon icon="fa-save" class="text-[11px] mr-1" /> Update task
               </button>
             </div>
           </div>

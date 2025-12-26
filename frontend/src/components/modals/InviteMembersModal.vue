@@ -18,7 +18,7 @@
           class="p-2 rounded-lg"
           :class="isDark ? 'hover:bg-slate-800' : 'hover:bg-slate-100'"
         >
-          <i class="fas fa-times" :class="isDark ? 'text-slate-300' : 'text-slate-600'"></i>
+          <AppIcon icon="fa-times" :class="isDark ? 'text-slate-300' : 'text-slate-600'" />
         </button>
       </div>
 
