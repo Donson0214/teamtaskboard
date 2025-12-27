@@ -30,197 +30,227 @@
       sidebarOpen ? 'sm:ml-[280px]' : 'sm:ml-20'
     ]"
   >
-    <div class="px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
-      <div class="w-full">
-        <div class="flex items-end gap-2">
-          <div class="flex-1 min-w-0 flex items-end gap-2 overflow-x-auto no-scrollbar flex-nowrap">
-            <div class="flex flex-col min-w-[120px]">
-              <span class="text-xs font-semibold uppercase whitespace-nowrap" :class="isDark ? 'text-slate-400' : 'text-slate-500'">Status</span>
-              <select v-model="filterStatus" :class="filterInputClass">
-                <option value="all">All columns</option>
-                <option v-for="status in statusOptions" :key="status" :value="status">{{ status }}</option>
-              </select>
-            </div>
-            <div class="flex flex-col min-w-[120px]">
-              <span class="text-xs font-semibold uppercase whitespace-nowrap" :class="isDark ? 'text-slate-400' : 'text-slate-500'">Assignee</span>
-              <select v-model="filterAssignee" :class="filterInputClass">
-                <option value="all">All</option>
-                <option v-for="person in assigneeOptions" :key="person" :value="person">{{ person }}</option>
-              </select>
-            </div>
-            <div class="flex flex-col min-w-[130px]">
-              <span class="text-xs font-semibold uppercase whitespace-nowrap" :class="isDark ? 'text-slate-400' : 'text-slate-500'">Priority labels</span>
-              <select v-model="filterPriority" :class="filterInputClass">
-                <option value="all">All</option>
-                <option v-for="option in priorityOptions" :key="option.value" :value="option.value">
-                  {{ option.label }}
-                </option>
-              </select>
-            </div>
-            <div class="flex flex-col min-w-[130px]">
-              <span class="text-xs font-semibold uppercase whitespace-nowrap" :class="isDark ? 'text-slate-400' : 'text-slate-500'">Due before</span>
-              <input
-                v-model="filterDueDate"
-                type="date"
-                :class="filterInputClass"
-              />
-            </div>
-            <button
-              @click="clearFilters"
-              class="px-4 py-2 text-xs rounded-full font-semibold"
-              :class="isDark ? 'bg-slate-800 hover:bg-slate-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'"
-            >
-              Clear
-            </button>
+    <div class="px-4 sm:px-6 py-4 sm:py-6 flex flex-wrap items-center justify-end gap-3">
+        <div class="flex items-center gap-3">
+          <div class="relative hidden sm:block">
+            <AppIcon icon="fa-search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search tasks..."
+              class="pl-11 pr-4 py-3 rounded-full border shadow-inner w-72 transition focus:ring-2 focus:ring-purple-500/70"
+              :class="isDark ? 'bg-slate-900/70 border-slate-800 text-white placeholder:text-slate-500' : 'bg-white border-slate-200 text-slate-900 placeholder:text-slate-400'"
+            />
           </div>
 
-          <div class="ml-auto flex items-center gap-2 shrink-0 self-end">
-            <div class="relative hidden sm:block shrink-0">
-              <AppIcon icon="fa-search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                v-model="searchQuery"
-                type="text"
-                placeholder="Search tasks..."
-                class="pl-11 pr-4 py-3 rounded-full border shadow-inner w-56 xl:w-64 transition focus:ring-2 focus:ring-purple-500/70"
-                :class="isDark ? 'bg-slate-900/70 border-slate-800 text-white placeholder:text-slate-500' : 'bg-white border-slate-200 text-slate-900 placeholder:text-slate-400'"
-              />
-            </div>
+
+
+          <button
+            @click="toggleTheme"
+            class="p-2.5 rounded-xl border transition"
+            :class="isDark ? 'bg-slate-900/80 border-slate-800 hover:border-purple-500/50' : 'bg-white/80 border-slate-200 hover:border-purple-300/60'"
+          >
+            <AppIcon :icon="isDark ? 'fa-sun' : 'fa-moon'" :class="isDark ? 'text-amber-400' : 'text-slate-600'" />
+          </button>
+
+          <NotificationBell />
+
+          <div class="relative" ref="activityRef">
             <button
-              @click="toggleTheme"
+              @click.stop="openActivity"
               class="p-2.5 rounded-xl border transition"
-              :class="isDark ? 'bg-slate-900/80 border-slate-800 hover:border-purple-500/50' : 'bg-white/80 border-slate-200 hover:border-purple-300/60'"
+              :class="isDark ? 'border-slate-800 bg-slate-900/80 hover:border-purple-500/50' : 'border-slate-200 bg-white/80 hover:border-purple-300/60'"
             >
-            <AppIcon :icon="isDark ? 'fa-sun' : 'fa-moon'" :class="isDark ? 'text-amber-400 text-lg' : 'text-slate-600 text-lg'" />
+              <AppIcon icon="fa-clock" class="text-slate-500" />
             </button>
 
-            <NotificationBell />
-
-            <div class="relative" ref="activityRef">
-              <button
-                @click.stop="openActivity"
-                class="p-2.5 rounded-xl border transition"
-                :class="isDark ? 'border-slate-800 bg-slate-900/80 hover:border-purple-500/50' : 'border-slate-200 bg-white/80 hover:border-purple-300/60'"
+            <transition name="fade-scale">
+              <div
+                v-if="activityOpen"
+                class="absolute right-0 mt-3 w-80 rounded-xl border shadow-xl p-3 z-50"
+                :class="isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'"
+                @click.stop
               >
-              <AppIcon icon="fa-clock" class="text-slate-500 text-lg" />
-              </button>
-
-              <transition name="fade-scale">
-                <div
-                  v-if="activityOpen"
-                  class="absolute right-0 mt-3 w-80 rounded-xl border shadow-xl p-3 z-50"
-                  :class="isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'"
-                  @click.stop
-                >
-                  <div class="flex items-center justify-between mb-2">
-                    <div>
-                      <p class="text-sm font-semibold">Activity</p>
-                      <p class="text-[11px]" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
-                        Recent updates
-                      </p>
-                    </div>
+                <div class="flex items-center justify-between mb-2">
+                  <div>
+                    <p class="text-sm font-semibold">Activity</p>
+                    <p class="text-[11px]" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
+                      Recent updates
+                    </p>
                   </div>
+                </div>
 
+                <div
+                  v-if="!liveActivity.length"
+                  class="text-xs px-3 py-2 rounded-lg"
+                  :class="isDark ? 'text-slate-400 bg-slate-800/60' : 'text-slate-600 bg-slate-50'"
+                >
+                  No activity yet.
+                </div>
+
+                <div v-else class="space-y-2 max-h-80 overflow-y-auto custom-scroll">
                   <div
-                    v-if="!liveActivity.length"
-                    class="text-xs px-3 py-2 rounded-lg"
-                    :class="isDark ? 'text-slate-400 bg-slate-800/60' : 'text-slate-600 bg-slate-50'"
+                    v-for="event in liveActivity"
+                    :key="event.id"
+                    class="flex items-start gap-3 p-2 rounded-xl transition"
+                    :class="isDark ? 'hover:bg-slate-800/80' : 'hover:bg-slate-50'"
                   >
-                    No activity yet.
-                  </div>
-
-                  <div v-else class="space-y-2 max-h-80 overflow-y-auto custom-scroll">
-                    <div
-                      v-for="event in liveActivity"
-                      :key="event.id"
-                      class="flex items-start gap-3 p-2 rounded-xl transition"
-                      :class="isDark ? 'hover:bg-slate-800/80' : 'hover:bg-slate-50'"
-                    >
-                      <div class="w-8 h-8 rounded-full grid place-items-center text-xs font-semibold text-white" :class="event.badgeBg">
-                        <AppIcon :icon="event.icon" />
-                      </div>
-                      <div class="flex-1">
-                        <p class="text-sm" :class="isDark ? 'text-white' : 'text-slate-800'">
-                          <strong>{{ event.user }}</strong> {{ event.action }}
-                          <span v-if="event.target" class="text-purple-600 dark:text-purple-300 font-semibold"> {{ event.target }}</span>
-                        </p>
-                        <div class="text-[12px] flex items-center gap-2" :class="isDark ? 'text-slate-400' : 'text-slate-600'">
-                          <span class="flex items-center gap-1"><AppIcon icon="fa-clock" class="text-[10px]" /> {{ event.when }}</span>
-                          <span class="w-1.5 h-1.5 rounded-full" :class="event.statusDot"></span>
-                        </div>
+                    <div class="w-8 h-8 rounded-full grid place-items-center text-xs font-semibold text-white" :class="event.badgeBg">
+                      <AppIcon :icon="event.icon" />
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-sm" :class="isDark ? 'text-white' : 'text-slate-800'">
+                        <strong>{{ event.user }}</strong> {{ event.action }}
+                        <span v-if="event.target" class="text-purple-600 dark:text-purple-300 font-semibold"> {{ event.target }}</span>
+                      </p>
+                      <div class="text-[12px] flex items-center gap-2" :class="isDark ? 'text-slate-400' : 'text-slate-600'">
+                        <span class="flex items-center gap-1"><AppIcon icon="fa-clock" class="text-[10px]" /> {{ event.when }}</span>
+                        <span class="w-1.5 h-1.5 rounded-full" :class="event.statusDot"></span>
                       </div>
                     </div>
                   </div>
                 </div>
-              </transition>
-            </div>
+              </div>
+            </transition>
+          </div>
 
-            <div class="relative" ref="profileRef">
-              <button
-                @click="toggleProfileMenu"
-                class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border transition"
-                :class="isDark ? 'border-slate-800 bg-slate-900/80 hover:border-purple-500/50' : 'border-slate-200 bg-white/80 hover:border-purple-300/60'"
+          <div class="relative" ref="profileRef">
+            <button
+              @click="toggleProfileMenu"
+              class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border transition"
+              :class="isDark ? 'border-slate-800 bg-slate-900/80 hover:border-purple-500/50' : 'border-slate-200 bg-white/80 hover:border-purple-300/60'"
+            >
+              <div v-if="userPhotoURL" class="w-9 h-9 rounded-full overflow-hidden border border-slate-300">
+                <img :src="userPhotoURL" class="w-full h-full object-cover" />
+              </div>
+              <div
+                v-else
+                class="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-semibold shadow-sm shadow-purple-400/40"
               >
-                <div v-if="userPhotoURL" class="w-9 h-9 rounded-full overflow-hidden border border-slate-300">
-                  <img :src="userPhotoURL" class="w-full h-full object-cover" />
-                </div>
-                <div
-                  v-else
-                  class="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-semibold shadow-sm shadow-purple-400/40"
-                >
-                  {{ userInitials }}
-                </div>
-              <div class="hidden xl:flex flex-col leading-tight text-left">
+                {{ userInitials }}
+              </div>
+              <div class="hidden sm:flex flex-col leading-tight text-left">
                 <span class="text-xs font-semibold" :class="isDark ? 'text-white' : 'text-slate-900'">
                   {{ userDisplayName }}
                 </span>
                 <span
                   v-if="userEmail"
-                  class="text-[11px] hidden 2xl:block"
+                  class="text-[11px]"
                   :class="isDark ? 'text-slate-400' : 'text-slate-500'"
                 >
                   {{ userEmail }}
-                  </span>
+                </span>
+              </div>
+              <AppIcon
+                icon="fa-chevron-down"
+                class="text-[10px]"
+                :class="isDark ? 'text-slate-400' : 'text-slate-500'"
+              />
+            </button>
+
+            <transition name="fade-scale">
+              <div
+                v-if="profileMenuOpen"
+                class="absolute right-0 mt-2 w-56 rounded-xl border py-2 shadow-lg shadow-black/10 z-50"
+                :class="isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'"
+              >
+                <div class="px-4 pb-2 border-b" :class="isDark ? 'border-slate-800' : 'border-slate-200'">
+                  <p class="text-sm font-semibold" :class="isDark ? 'text-white' : 'text-slate-900'">
+                    {{ userDisplayName }}
+                  </p>
+                  <p class="text-xs truncate" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
+                    {{ userEmail }}
+                  </p>
                 </div>
-                <AppIcon
-                  icon="fa-chevron-down"
-                  class="text-[10px]"
-                  :class="isDark ? 'text-slate-400' : 'text-slate-500'"
-                />
-              </button>
 
-              <transition name="fade-scale">
-                <div
-                  v-if="profileMenuOpen"
-                  class="absolute right-0 mt-2 w-56 rounded-xl border py-2 shadow-lg shadow-black/10 z-50"
-                  :class="isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'"
+                <button @click="toggleTheme" class="menu-item" :class="menuItemClass">
+                  <AppIcon icon="fa-adjust" class="text-xs" /> Toggle Theme
+                </button>
+
+                <button
+                  @click="handleLogoutFromMenu"
+                  class="menu-item text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                 >
-                  <div class="px-4 pb-2 border-b" :class="isDark ? 'border-slate-800' : 'border-slate-200'">
-                    <p class="text-sm font-semibold" :class="isDark ? 'text-white' : 'text-slate-900'">
-                      {{ userDisplayName }}
-                    </p>
-                    <p class="text-xs truncate" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
-                      {{ userEmail }}
-                    </p>
-                  </div>
-
-                  <button @click="toggleTheme" class="menu-item" :class="menuItemClass">
-                    <AppIcon icon="fa-adjust" class="text-base" /> Toggle Theme
-                  </button>
-
-                  <button
-                    @click="handleLogoutFromMenu"
-                    class="menu-item text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                  >
-                  <AppIcon icon="fa-sign-out-alt" class="text-base" />
+                  <AppIcon icon="fa-sign-out-alt" class="text-xs" />
                   Logout
                 </button>
-                </div>
-              </transition>
+              </div>
+            </transition>
+          </div>
+        </div>
+      </div>
+      <div class="border-t" :class="isDark ? 'border-slate-800/80' : 'border-slate-200/80'">
+        <div class="px-4 sm:px-6 py-4">
+          <div class="max-w-6xl mx-auto">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex flex-wrap gap-2 text-[11px] font-semibold">
+                <span
+                  class="flex items-center gap-1 px-3 py-1 rounded-full border"
+                  :class="isDark ? 'border-slate-700 bg-transparent text-white' : 'border-slate-200 bg-white text-slate-600'"
+                >
+                  <AppIcon icon="fa-layer-group" class="text-[11px]" />
+                  {{ columnCount }} columns
+                </span>
+                <span
+                  class="flex items-center gap-1 px-3 py-1 rounded-full border"
+                  :class="isDark ? 'border-slate-700 bg-transparent text-white' : 'border-slate-200 bg-white text-slate-600'"
+                >
+                  <AppIcon icon="fa-clipboard-check" class="text-[11px]" />
+                  {{ totalTasks }} tasks
+                </span>
+                <span
+                  class="flex items-center gap-1 px-3 py-1 rounded-full border"
+                  :class="isDark ? 'border-slate-700 bg-transparent text-white' : 'border-slate-200 bg-white text-slate-600'"
+                >
+                  <AppIcon icon="fa-tags" class="text-[11px]" />
+                  {{ labelCount }} labels
+                </span>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-end gap-4 mt-3">
+              <div class="flex flex-col min-w-[150px]">
+                <span class="text-xs font-semibold uppercase" :class="isDark ? 'text-slate-400' : 'text-slate-500'">Status</span>
+                <select v-model="filterStatus" :class="filterInputClass">
+                  <option value="all">All columns</option>
+                  <option v-for="status in statusOptions" :key="status" :value="status">{{ status }}</option>
+                </select>
+              </div>
+              <div class="flex flex-col min-w-[150px]">
+                <span class="text-xs font-semibold uppercase" :class="isDark ? 'text-slate-400' : 'text-slate-500'">Assignee</span>
+                <select v-model="filterAssignee" :class="filterInputClass">
+                  <option value="all">All</option>
+                  <option v-for="person in assigneeOptions" :key="person" :value="person">{{ person }}</option>
+                </select>
+              </div>
+              <div class="flex flex-col min-w-[180px]">
+                <span class="text-xs font-semibold uppercase" :class="isDark ? 'text-slate-400' : 'text-slate-500'">Priority labels</span>
+                <select v-model="filterPriority" :class="filterInputClass">
+                  <option value="all">All</option>
+                  <option v-for="option in priorityOptions" :key="option.value" :value="option.value">
+                    {{ option.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="flex flex-col min-w-[160px]">
+                <span class="text-xs font-semibold uppercase" :class="isDark ? 'text-slate-400' : 'text-slate-500'">Due before</span>
+                <input
+                  v-model="filterDueDate"
+                  type="date"
+                  :class="filterInputClass"
+                />
+              </div>
+              <button
+                @click="clearFilters"
+                class="px-4 py-2 mt-2 text-xs rounded-full font-semibold"
+                :class="isDark ? 'bg-slate-800 hover:bg-slate-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'"
+              >
+                Clear
+              </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
   </header>
 
   <div
@@ -271,8 +301,8 @@
               <button
                 v-if="sidebarOpen"
                 @click="toggleSidebar"
-                class="p-2.5 rounded-xl transition"
-                :class="isDark ? 'bg-slate-900/80 hover:bg-slate-800/80' : 'bg-white/80 hover:bg-slate-100/80'"
+                class="p-2.5 rounded-xl border transition"
+                :class="isDark ? 'border-slate-800 bg-slate-900/80 hover:border-purple-500/50' : 'border-slate-200 bg-white/80 hover:border-purple-300/60'"
                 aria-label="Collapse sidebar"
               >
                 <AppIcon icon="fa-chevron-right" :class="isDark ? 'text-white' : 'text-slate-700'" />
@@ -292,7 +322,7 @@
                   sidebarOpen ? 'justify-start' : 'justify-center px-2 gap-0'
                 ]"
               >
-                <AppIcon :icon="item.icon" class="text-2xl" />
+                <AppIcon :icon="item.icon" class="text-base" />
                 <span v-if="sidebarOpen">{{ item.label }}</span>
               </button>
             </nav>
@@ -342,34 +372,6 @@
                 </div>
               </div>
             </div>
-            <div v-else class="flex-1 border-t pt-4" :class="isDark ? 'border-slate-800' : 'border-slate-200'">
-              <div class="flex flex-col items-center gap-2">
-                <div class="text-[10px] font-semibold uppercase tracking-[0.2em]" :class="isDark ? 'text-slate-500' : 'text-slate-400'">
-                  Boards
-                </div>
-                <div class="flex flex-col items-center gap-2 max-h-[260px] overflow-y-auto custom-scroll w-full">
-                  <button
-                    v-for="board in filteredBoards"
-                    :key="board.id"
-                    @click="goToBoard(board)"
-                    class="w-full flex items-center justify-center"
-                    :title="board.name"
-                  >
-                    <span
-                      class="w-10 h-10 rounded-xl grid place-items-center text-xs font-bold border"
-                      :class="String(selectedBoardId) === String(board.id)
-                        ? (isDark ? 'bg-slate-800 text-white border-slate-700' : 'bg-indigo-50 text-indigo-700 border-indigo-100')
-                        : (isDark ? 'bg-slate-900/80 text-slate-200 border-slate-800' : 'bg-white text-slate-800 border-slate-200')"
-                    >
-                      {{ getInitial(board.name, "B") }}
-                    </span>
-                  </button>
-                  <div v-if="!filteredBoards.length" class="text-[10px] text-slate-500 px-2">
-                    No boards
-                  </div>
-                </div>
-              </div>
-            </div>
 
             <div
               class="flex gap-2 border-t pt-4"
@@ -387,7 +389,7 @@
                 ]"
                 title="Toggle theme"
               >
-                <AppIcon icon="fa-moon" class="text-base" />
+                <AppIcon icon="fa-moon" class="text-sm" />
                 <span v-if="sidebarOpen">Theme</span>
               </button>
               <button
@@ -399,7 +401,7 @@
                 ]"
                 title="Logout"
               >
-                <AppIcon icon="fa-sign-out-alt" class="text-base" />
+                <AppIcon icon="fa-sign-out-alt" class="text-sm" />
                 <span v-if="sidebarOpen">Logout</span>
               </button>
             </div>
@@ -411,7 +413,7 @@
     <div class="flex-1 min-w-0 flex flex-col">
 
     <main class="flex-1 overflow-x-auto p-4 sm:p-6">
-        <div class="w-full">
+        <div class="max-w-6xl mx-auto">
         <div class="flex gap-4 pb-4 text-sm overflow-x-auto no-scrollbar sm:flex-wrap">
 
       
@@ -1597,7 +1599,7 @@ const sidebarNav = [
   { id: "boards", icon: "fa-clipboard", style: "fas", label: "Boards" },
   { id: "tasks", icon: "fa-tasks", style: "fas", label: "Tasks" },
   { id: "owned", icon: "fa-folder-open", style: "far", label: "My spaces" },
-  { id: "shared", icon: "fa-project-diagram", style: "far", label: "Collabs" },
+  { id: "shared", icon: "fa-handshake", style: "far", label: "Collabs" },
 ];
 
 const selectedBoardId = computed(() => route.params.boardId);
@@ -1660,11 +1662,6 @@ const handleNavClick = (item) => {
 const goToBoard = async (board) => {
   if (!board?.id || board.id === selectedBoardId.value) return;
   await router.push(`/workspace/${workspaceId.value}/board/${board.id}`);
-};
-const getInitial = (label, fallback = "") => {
-  const value = String(label || "").trim();
-  if (!value) return fallback || "?";
-  return value[0].toUpperCase();
 };
 
 /* STYLE CLASSES */

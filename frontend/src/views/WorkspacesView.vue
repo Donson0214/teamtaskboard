@@ -50,7 +50,7 @@
             class="p-2.5 rounded-xl border transition"
             :class="isDark ? 'bg-slate-900/80 border-slate-800 hover:border-purple-500/50' : 'bg-white/80 border-slate-200 hover:border-purple-300/60'"
           >
-            <AppIcon :icon="isDark ? 'fa-sun' : 'fa-moon'" :class="isDark ? 'text-amber-400' : 'text-slate-600'" />
+            <AppIcon :icon="isDark ? 'fa-sun' : 'fa-moon'" :class="isDark ? 'text-amber-400 text-lg' : 'text-slate-600 text-lg'" />
           </button>
 
           <NotificationBell ref="notificationBellRef" />
@@ -111,14 +111,14 @@
                 </div>
 
                 <button @click="toggleTheme" class="menu-item" :class="menuItemClass">
-                  <AppIcon icon="fa-adjust" class="text-xs" /> Toggle Theme
+                  <AppIcon icon="fa-adjust" class="text-base" /> Toggle Theme
                 </button>
 
                 <button
                   @click="handleLogoutFromMenu"
                   class="menu-item text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                 >
-                  <AppIcon icon="fa-sign-out-alt" class="text-xs" />
+                  <AppIcon icon="fa-sign-out-alt" class="text-base" />
                   Logout
                 </button>
               </div>
@@ -177,8 +177,8 @@
               <button
                 v-if="sidebarOpen"
                 @click="toggleSidebar"
-                class="p-2.5 rounded-xl border transition"
-                :class="isDark ? 'border-slate-800 bg-slate-900/80 hover:border-purple-500/50' : 'border-slate-200 bg-white/80 hover:border-purple-300/60'"
+                class="p-2.5 rounded-xl transition"
+                :class="isDark ? 'bg-slate-900/80 hover:bg-slate-800/80' : 'bg-white/80 hover:bg-slate-100/80'"
                 aria-label="Collapse sidebar"
               >
                 <AppIcon icon="fa-chevron-right" :class="isDark ? 'text-white' : 'text-slate-700'" />
@@ -199,7 +199,7 @@
                   sidebarOpen ? 'justify-start' : 'justify-center px-2 gap-0'
                 ]"
               >
-                <AppIcon :icon="item.icon" class="text-base" />
+                <AppIcon :icon="item.icon" class="text-2xl" />
                 <span v-if="sidebarOpen">{{ item.label }}</span>
               </button>
             </nav>
@@ -238,6 +238,28 @@
                 </div>
               </div>
             </div>
+            <div v-else class="flex-1 border-t pt-4" :class="isDark ? 'border-slate-800' : 'border-slate-200'">
+              <div class="flex flex-col items-center gap-2">
+                <div class="flex flex-col items-center gap-2 max-h-[260px] overflow-y-auto custom-scroll w-full">
+                  <button
+                    v-for="workspace in filteredWorkspaces"
+                    :key="workspace.id"
+                    @click="goToWorkspace(workspace)"
+                    class="w-full flex items-center justify-center"
+                    :title="workspace.name"
+                  >
+                    <span
+                      class="w-10 h-10 rounded-xl grid place-items-center text-xs font-bold border"
+                      :class="selectedWorkspace?.id === workspace.id
+                        ? (isDark ? 'bg-slate-800 text-white border-slate-700' : 'bg-slate-100 text-slate-900 border-slate-200')
+                        : (isDark ? 'bg-slate-900/80 text-slate-200 border-slate-800' : 'bg-white text-slate-800 border-slate-200')"
+                    >
+                      {{ workspace.name?.slice(0, 1)?.toUpperCase() || 'W' }}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
 
             <div
               class="flex gap-2 border-t pt-4"
@@ -255,7 +277,7 @@
                 ]"
                 title="Toggle theme"
               >
-                <AppIcon icon="fa-moon" class="text-sm" />
+                <AppIcon icon="fa-moon" class="text-base" />
                 <span v-if="sidebarOpen">Theme</span>
               </button>
               <button
@@ -267,7 +289,7 @@
                 ]"
                 title="Logout"
               >
-                <AppIcon icon="fa-sign-out-alt" class="text-sm" />
+                <AppIcon icon="fa-sign-out-alt" class="text-base" />
                 <span v-if="sidebarOpen">Logout</span>
               </button>
             </div>
@@ -336,7 +358,7 @@
                           @click.stop="openWorkspaceMenu(workspace)"
                           aria-label="Workspace actions"
                         >
-                          <AppIcon icon="fa-ellipsis-vertical" />
+                          <AppIcon icon="fa-ellipsis-vertical" class="text-2xl stroke-2" />
                         </button>
                       </div>
 
@@ -382,7 +404,7 @@
                           ref="workspaceMenuRef"
                         >
                           <button class="menu-item" :class="menuItemClass" @click.stop="goToWorkspace(workspace)">
-                            <AppIcon icon="fa-eye" class="text-xs" /> View Boards
+                            <AppIcon icon="fa-eye" class="text-base" /> View Boards
                           </button>
                           <button
                             v-if="getRole(workspace.id) === 'owner'"
@@ -390,7 +412,7 @@
                             :class="menuItemClass"
                             @click.stop="openEditWorkspace(workspace)"
                           >
-                            <AppIcon icon="fa-edit" class="text-xs" /> Edit Workspace
+                            <AppIcon icon="fa-edit" class="text-base" /> Edit Workspace
                           </button>
                           <button
                             v-if="getRole(workspace.id) === 'owner'"
@@ -398,7 +420,7 @@
                             :class="menuItemClass"
                             @click.stop="openInviteModal(workspace)"
                           >
-                            <AppIcon icon="fa-user-plus" class="text-xs" /> Invite Members
+                            <AppIcon icon="fa-user-plus" class="text-base" /> Invite Members
                           </button>
                           <button
                             v-if="getRole(workspace.id) !== 'guest'"
@@ -406,21 +428,21 @@
                             :class="menuItemClass"
                             @click.stop="openMemberManager(workspace)"
                           >
-                            <AppIcon icon="fa-users" class="text-xs" /> Manage Members
+                            <AppIcon icon="fa-users" class="text-base" /> Manage Members
                           </button>
                           <button
                             v-if="canLeaveWorkspace(workspace)"
                             class="menu-item text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
                             @click.stop="promptLeaveWorkspace(workspace)"
                           >
-                            <AppIcon icon="fa-sign-out-alt" class="text-xs" /> Leave
+                            <AppIcon icon="fa-sign-out-alt" class="text-base" /> Leave
                           </button>
                           <button
                             v-if="getRole(workspace.id) === 'owner'"
                             class="menu-item text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                             @click.stop="confirmDeleteWorkspace(workspace)"
                           >
-                            <AppIcon icon="fa-trash" class="text-xs" /> Delete Workspace
+                            <AppIcon icon="fa-trash" class="text-base" /> Delete Workspace
                           </button>
                         </div>
                       </transition>
@@ -467,7 +489,7 @@
                           @click.stop="openWorkspaceMenu(workspace)"
                           aria-label="Workspace actions"
                         >
-                          <AppIcon icon="fa-ellipsis-vertical" />
+                          <AppIcon icon="fa-ellipsis-vertical" class="text-2xl stroke-2" />
                         </button>
                       </div>
 
@@ -519,7 +541,7 @@
                           ref="workspaceMenuRef"
                         >
                           <button class="menu-item" :class="menuItemClass" @click.stop="goToWorkspace(workspace)">
-                            <AppIcon icon="fa-eye" class="text-xs" /> View Workspace
+                            <AppIcon icon="fa-eye" class="text-base" /> View Workspace
                           </button>
                           <button
                             v-if="getRole(workspace.id) === 'owner'"
@@ -527,7 +549,7 @@
                             :class="menuItemClass"
                             @click.stop="openEditWorkspace(workspace)"
                           >
-                            <AppIcon icon="fa-edit" class="text-xs" /> Edit Workspace
+                            <AppIcon icon="fa-edit" class="text-base" /> Edit Workspace
                           </button>
                           <button
                             v-if="getRole(workspace.id) === 'owner'"
@@ -535,7 +557,7 @@
                             :class="menuItemClass"
                             @click.stop="openInviteModal(workspace)"
                           >
-                            <AppIcon icon="fa-user-plus" class="text-xs" /> Invite Members
+                            <AppIcon icon="fa-user-plus" class="text-base" /> Invite Members
                           </button>
                           <button
                             v-if="getRole(workspace.id) !== 'guest'"
@@ -543,21 +565,21 @@
                             :class="menuItemClass"
                             @click.stop="openMemberManager(workspace)"
                           >
-                            <AppIcon icon="fa-users" class="text-xs" /> Manage Members
+                            <AppIcon icon="fa-users" class="text-base" /> Manage Members
                           </button>
                           <button
                             v-if="canLeaveWorkspace(workspace)"
                             class="menu-item text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
                             @click.stop="promptLeaveWorkspace(workspace)"
                           >
-                            <AppIcon icon="fa-sign-out-alt" class="text-xs" /> Leave
+                            <AppIcon icon="fa-sign-out-alt" class="text-base" /> Leave
                           </button>
                           <button
                             v-if="getRole(workspace.id) === 'owner'"
                             class="menu-item text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                             @click.stop="confirmDeleteWorkspace(workspace)"
                           >
-                            <AppIcon icon="fa-trash" class="text-xs" /> Delete Workspace
+                            <AppIcon icon="fa-trash" class="text-base" /> Delete Workspace
                           </button>
                         </div>
                       </transition>
@@ -807,7 +829,7 @@ const sidebarNav = [
   { id: "boards", icon: "fa-clipboard", style: "fas", label: "Boards" },
   { id: "tasks", icon: "fa-tasks", style: "fas", label: "Tasks" },
   { id: "owned", icon: "fa-folder-open", style: "far", label: "My spaces" },
-  { id: "shared", icon: "fa-handshake", style: "far", label: "Collabs" },
+  { id: "shared", icon: "fa-project-diagram", style: "far", label: "Collabs" },
 ];
 
 let searchDebounceTimer = null;

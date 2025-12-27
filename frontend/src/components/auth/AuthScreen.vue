@@ -188,13 +188,17 @@ const boardStore = useBoardStore();
 const normalizeTab = (value) =>
   value === "register" ? "register" : "login";
 
+const SIDEBAR_STORAGE_KEY = "taskflow.sidebarOpen";
+
+const ensureSidebarOpen = () => {
+  try {
+    localStorage.setItem(SIDEBAR_STORAGE_KEY, "1");
+  } catch (_) {}
+};
+
 const getRedirectPath = () => {
   const redirect = router.currentRoute.value?.query?.redirect;
-  if (
-    typeof redirect === "string" &&
-    redirect.startsWith("/") &&
-    !redirect.startsWith("//")
-  ) {
+  if (typeof redirect === "string" && redirect.startsWith("/workspace")) {
     return redirect;
   }
   return "/workspace";
@@ -347,6 +351,7 @@ const handleLogin = async () => {
   try {
     const result = await auth.login(trimmedEmail, enteredPassword);
     if (result?.ok) {
+      ensureSidebarOpen();
       router.push(getRedirectPath());
     } else {
       setAlert("error", result?.message || "Unable to sign in. Try again.");
@@ -388,6 +393,7 @@ const handleGoogle = async () => {
   try {
     const result = await auth.googleLogin();
     if (result?.ok) {
+      ensureSidebarOpen();
       router.push(getRedirectPath());
     } else {
       setAlert("error", result?.message || "Google sign-in failed. Please try again.");
@@ -474,6 +480,7 @@ const ensureDemoTasks = async (workspaceId, boardId) => {
 const runDemoLogin = async () => {
   const result = await auth.demoLogin();
   if (result?.ok) {
+    ensureSidebarOpen();
     const workspace = await ensureDemoWorkspace();
     if (workspace?.id) {
       const board = await ensureDemoBoard(workspace.id);

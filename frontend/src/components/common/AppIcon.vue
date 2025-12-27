@@ -168,7 +168,7 @@ const iconComponent = computed(
 
 const iconClass = computed(() => {
   const extra = attrs.class;
-  return ["inline-block w-[1em] h-[1em] shrink-0 align-text-bottom", extra];
+  return ["inline-block w-[0.9em] h-[0.9em] shrink-0 align-text-bottom", extra];
 });
 
 const passthroughAttrs = computed(() => {

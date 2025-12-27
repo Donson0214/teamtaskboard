@@ -49,7 +49,7 @@
             class="p-2.5 rounded-xl border transition"
             :class="isDark ? 'bg-slate-900/80 border-slate-800 hover:border-purple-500/50' : 'bg-white/80 border-slate-200 hover:border-purple-300/60'"
           >
-            <AppIcon :icon="isDark ? 'fa-sun' : 'fa-moon'" :class="isDark ? 'text-amber-400' : 'text-slate-600'" />
+            <AppIcon :icon="isDark ? 'fa-sun' : 'fa-moon'" :class="isDark ? 'text-amber-400 text-lg' : 'text-slate-600 text-lg'" />
           </button>
 
           <NotificationBell ref="notificationBellRef" />
@@ -128,14 +128,14 @@
                 <div class="flex flex-col py-1">
 
                   <button @click="toggleTheme" class="menu-item flex items-center gap-2 px-4 py-2.5 text-sm font-medium" :class="menuItemClass">
-                    <AppIcon icon="fa-adjust" class="text-slate-500" /> Toggle Theme
+                    <AppIcon icon="fa-adjust" class="text-slate-500 text-base" /> Toggle Theme
                   </button>
 
                   <button
                     @click="handleLogoutFromMenu"
                     class="menu-item flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                   >
-                    <AppIcon icon="fa-sign-out-alt" class="text-red-500" />
+                    <AppIcon icon="fa-sign-out-alt" class="text-red-500 text-base" />
                     Logout
                   </button>
                 </div>
@@ -192,8 +192,8 @@
               <button
                 v-if="sidebarOpen"
                 @click="toggleSidebar"
-                class="p-2.5 rounded-xl border transition"
-                :class="isDark ? 'border-slate-800 bg-slate-900/80 hover:border-purple-500/50' : 'border-slate-200 bg-white/80 hover:border-purple-300/60'"
+                class="p-2.5 rounded-xl transition"
+                :class="isDark ? 'bg-slate-900/80 hover:bg-slate-800/80' : 'bg-white/80 hover:bg-slate-100/80'"
                 aria-label="Collapse sidebar"
               >
                 <AppIcon icon="fa-chevron-right" :class="isDark ? 'text-white' : 'text-slate-700'" />
@@ -213,7 +213,7 @@
                   sidebarOpen ? 'justify-start' : 'justify-center px-2 gap-0'
                 ]"
               >
-                <AppIcon :icon="item.icon" class="text-base" />
+                <AppIcon :icon="item.icon" class="text-2xl" />
                 <span v-if="sidebarOpen">{{ item.label }}</span>
               </button>
             </nav>
@@ -254,6 +254,28 @@
                 </div>
               </div>
             </div>
+            <div v-else class="flex-1 border-t pt-4" :class="isDark ? 'border-slate-800' : 'border-slate-200'">
+              <div class="flex flex-col items-center gap-2">
+                <div class="flex flex-col items-center gap-2 max-h-[260px] overflow-y-auto custom-scroll w-full">
+                  <button
+                    v-for="workspace in filteredWorkspaces"
+                    :key="workspace.id"
+                    @click="goToWorkspace(workspace)"
+                    class="w-full flex items-center justify-center"
+                    :title="workspace.name"
+                  >
+                    <span
+                      class="w-10 h-10 rounded-xl grid place-items-center text-xs font-bold border"
+                      :class="selectedWorkspaceId === workspace.id
+                        ? (isDark ? 'bg-slate-800 text-white border-slate-700' : 'bg-slate-100 text-slate-900 border-slate-200')
+                        : (isDark ? 'bg-slate-900/80 text-slate-200 border-slate-800' : 'bg-white text-slate-800 border-slate-200')"
+                    >
+                      {{ workspace.name?.slice(0, 1)?.toUpperCase() || 'W' }}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
 
             <div
               class="flex gap-2 border-t pt-4"
@@ -271,7 +293,7 @@
                 ]"
                 title="Toggle theme"
               >
-                <AppIcon icon="fa-moon" class="text-sm" />
+                <AppIcon icon="fa-moon" class="text-base" />
                 <span v-if="sidebarOpen">Theme</span>
               </button>
               <button
@@ -283,7 +305,7 @@
                 ]"
                 title="Logout"
               >
-                <AppIcon icon="fa-sign-out-alt" class="text-sm" />
+                <AppIcon icon="fa-sign-out-alt" class="text-base" />
                 <span v-if="sidebarOpen">Logout</span>
               </button>
             </div>
@@ -440,10 +462,18 @@
 
             <!-- Create Board Card -->
             <button
-              v-if="!isGuest"
-              @click="showCreateBoard = true"
-              class="relative p-6 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center min-h-[180px] transition hover:-translate-y-1 hover:shadow-xl"
-              :class="isDark ? 'bg-slate-900/70 border-slate-800 hover:border-purple-500/60' : 'bg-white/90 border-slate-200 hover:border-purple-300/70'"
+              type="button"
+              :disabled="isGuest"
+              @click="!isGuest && (showCreateBoard = true)"
+              class="relative p-6 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center min-h-[180px] transition"
+              :class="[
+                isDark ? 'bg-slate-900/70 border-slate-800' : 'bg-white/90 border-slate-200',
+                isGuest
+                  ? 'opacity-60 cursor-not-allowed'
+                  : `hover:-translate-y-1 hover:shadow-xl ${isDark ? 'hover:border-purple-500/60' : 'hover:border-purple-300/70'}`
+              ]"
+              :aria-disabled="isGuest ? 'true' : 'false'"
+              :title="isGuest ? 'Guests cannot create boards' : 'Create board'"
             >
               <div
                 class="absolute inset-0 pointer-events-none opacity-60"
@@ -674,7 +704,7 @@ const sidebarNav = [
   { id: "boards", icon: "fa-clipboard", style: "fas", label: "Boards" },
   { id: "tasks", icon: "fa-tasks", style: "fas", label: "Tasks" },
   { id: "owned", icon: "fa-folder-open", style: "far", label: "My spaces" },
-  { id: "shared", icon: "fa-handshake", style: "far", label: "Collabs" },
+  { id: "shared", icon: "fa-project-diagram", style: "far", label: "Collabs" },
 ];
 
 let searchDebounceTimer = null;

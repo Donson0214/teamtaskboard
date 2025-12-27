@@ -37,7 +37,7 @@
               type="email"
               required
               :disabled="isSending"
-              
+              placeholder="example@gmail.com"
               class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-purple-500"
               :class="isDark
                 ? 'bg-slate-800 border-slate-700 text-white'

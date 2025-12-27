@@ -39,7 +39,7 @@
             class="p-2.5 rounded-xl border transition"
             :class="isDark ? 'bg-slate-900/80 border-slate-800 hover:border-purple-500/50' : 'bg-white/80 border-slate-200 hover:border-purple-300/60'"
           >
-            <AppIcon :icon="isDark ? 'fa-sun' : 'fa-moon'" :class="isDark ? 'text-amber-400' : 'text-slate-600'" />
+            <AppIcon :icon="isDark ? 'fa-sun' : 'fa-moon'" :class="isDark ? 'text-amber-400 text-lg' : 'text-slate-600 text-lg'" />
           </button>
 
           <NotificationBell ref="notificationBellRef" />
@@ -95,14 +95,14 @@
                   </p>
                 </div>
                 <button @click="toggleTheme" class="menu-item" :class="menuItemClass">
-                  <AppIcon icon="fa-adjust" class="text-xs" /> Toggle Theme
+                  <AppIcon icon="fa-adjust" class="text-base" /> Toggle Theme
                 </button>
 
                 <button
                   @click="handleLogoutFromMenu"
                   class="menu-item text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                 >
-                  <AppIcon icon="fa-sign-out-alt" class="text-xs" />
+                  <AppIcon icon="fa-sign-out-alt" class="text-base" />
                   Logout
                 </button>
               </div>
@@ -158,8 +158,8 @@
               <button
                 v-if="sidebarOpen"
                 @click="toggleSidebar"
-                class="p-2.5 rounded-xl border transition"
-                :class="isDark ? 'border-slate-800 bg-slate-900/80 hover:border-purple-500/50' : 'border-slate-200 bg-white/80 hover:border-purple-300/60'"
+                class="p-2.5 rounded-xl transition"
+                :class="isDark ? 'bg-slate-900/80 hover:bg-slate-800/80' : 'bg-white/80 hover:bg-slate-100/80'"
                 aria-label="Collapse sidebar"
               >
                 <AppIcon icon="fa-chevron-right" :class="isDark ? 'text-white' : 'text-slate-700'" />
@@ -179,7 +179,7 @@
                   sidebarOpen ? 'justify-start' : 'justify-center px-2 gap-0'
                 ]"
               >
-                <AppIcon :icon="item.icon" class="text-base" />
+                <AppIcon :icon="item.icon" class="text-2xl" />
                 <span v-if="sidebarOpen">{{ item.label }}</span>
               </button>
             </nav>
@@ -202,7 +202,7 @@
                 ]"
                 title="Toggle theme"
               >
-                <AppIcon icon="fa-moon" class="text-sm" />
+                <AppIcon icon="fa-moon" class="text-base" />
                 <span v-if="sidebarOpen">Theme</span>
               </button>
               <button
@@ -214,7 +214,7 @@
                 ]"
                 title="Logout"
               >
-                <AppIcon icon="fa-sign-out-alt" class="text-sm" />
+                <AppIcon icon="fa-sign-out-alt" class="text-base" />
                 <span v-if="sidebarOpen">Logout</span>
               </button>
             </div>
@@ -831,7 +831,7 @@ const sidebarNav = [
   { id: "boards", icon: "fa-clipboard", style: "fas", label: "Boards" },
   { id: "tasks", icon: "fa-tasks", style: "fas", label: "Tasks" },
   { id: "owned", icon: "fa-folder-open", style: "far", label: "My spaces" },
-  { id: "shared", icon: "fa-handshake", style: "far", label: "Collabs" },
+  { id: "shared", icon: "fa-project-diagram", style: "far", label: "Collabs" },
 ];
 
 const focusSeconds = ref(0);

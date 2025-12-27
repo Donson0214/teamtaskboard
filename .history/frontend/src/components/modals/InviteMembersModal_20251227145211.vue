@@ -37,7 +37,7 @@
               type="email"
               required
               :disabled="isSending"
-              
+              placeholder="example@gmail.com"
               class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-purple-500"
               :class="isDark
                 ? 'bg-slate-800 border-slate-700 text-white'
@@ -62,7 +62,7 @@
                 : 'bg-white border-slate-300 text-slate-900'"
             >
               <option value="member">Member </option>
-              <option value="guest">Guest </option>
+              <option value="guest">Guest (Read Only)</option>
             </select>
           </div>
         </div>

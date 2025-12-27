@@ -161,6 +161,7 @@ const props = defineProps({
     required: true,
   },
 });
+const emit = defineEmits(["close"]);
 
 const workspaceStore = useWorkspaceStore();
 const themeStore = useThemeStore();

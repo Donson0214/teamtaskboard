@@ -50,6 +50,7 @@ const props = defineProps({
   file: { type: Object, required: true },
   isDark: Boolean,
 });
+const emit = defineEmits(["close"]);
 
 const isImage = computed(() => props.file?.type?.startsWith("image/"));
 

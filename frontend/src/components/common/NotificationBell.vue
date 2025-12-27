@@ -7,6 +7,7 @@
     >
       <AppIcon
         icon="fa-bell"
+        class="text-lg"
         :class="{ 'spin-once': bellSpinning }"
         @animationend="bellSpinning = false"
       />
