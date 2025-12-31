@@ -1,0 +1,49 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --runInBand",
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "reset-db": "node resetDb.js",
+    "db:push": "prisma db push",
+    "db:migrate": "node scripts/migrate.js",
+    "db:migrate:force": "node scripts/migrate.js --accept-data-loss",
+    "db:seed": "prisma db seed",
+    "db:seed:demo": "node prisma/seed.js",
+    "postinstall": "prisma generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@prisma/client": "^6.19.1",
+    "axios": "^1.13.2",
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2",
+    "firebase": "^12.6.0",
+    "firebase-admin": "^13.6.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^7.0.0",
+    "multer": "^2.0.2",
+    "multer-storage-cloudinary": "^2.2.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "streamifier": "^0.1.1",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.11",
+    "prisma": "^6.19.1"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+}
