@@ -481,7 +481,7 @@
           
           <div
             :class="columnBodyClass"
-            class="flex-1 rounded-b-xl border p-3 min-h-[360px] sm:min-h-[500px] shadow-sm transition-colors"
+            class="flex-1 rounded-b-xl border p-3 min-h-[360px] sm:min-h-[500px] shadow-sm transition-colors flex flex-col"
           >
             <draggable
               :list="isFiltering ? (filteredTasksByColumnId[column.id] || []) : (column.tasks || [])"
@@ -489,10 +489,11 @@
               :group="{ name: 'tasks' }"
               :disabled="!canEditTasks || isFiltering"
               :sort="false"
+              :animation="180"
               ghost-class="task-ghost"
               chosen-class="task-chosen"
               drag-class="task-drag"
-              class="space-y-3"
+              class="space-y-3 flex-1"
               @change="handleTaskDragChange(column, $event)"
             >
               <template #item="{ element: task }">
